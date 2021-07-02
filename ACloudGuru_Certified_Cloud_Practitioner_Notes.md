@@ -850,4 +850,118 @@ To verify how and why AWS is compliant with various organizations (like HIPPA) y
 
 You can also find all of these within the management console under "AWS Artifact" and get the "artifact" tied with that compliance report.
 
-### AWS Shared Responsibility Model
+### :bulb: AWS Shared Responsibility Model
+
+AWS manages security of the cloud, but the security of what is placed _in_ the cloud lies in the hands of the customer. You maintain and retain control of what security will be implemented and it is your responsibility to protect your content, platform, apps, etc. 
+
+Here's an example. Amazon is responsible for maintaining the data centers where servers are physically located, but you as a customer are responsible for keeping your EC2 instances updated. If an EC2 instance is hacked because you didn't update it, that's on you.
+
+![AWS Shared Responsibility](img/aws_shared_responsibility.png)
+
+- AWS = "Security _of_ the cloud"
+- Customer = "Security _in_ the cloud"
+
+All notes about this can be found on the [**AWS Shared Responsibility Model page**](https://aws.amazon.com/compliance/shared-responsibility-model/).
+
+> This section can be 4-5 questions on the exam, so knowing the diagram and visualizing who's responsibility is what will help.
+
+### AWS WAF (Web Application Firewall) & AWS Shield
+
+AWS WAF is a firewall that protects web apps from common exploits. For example, the firewall will monitor traffic and stop cross-site scripting or SQL injections at the application before they make it to the databases or load balancers. 
+
+AWS Shield is a managed Distrbuted Denial of Service (DDoS) protection service safeguarding web apps on AWS. Basically this will stop DDoS attacks, i.e. when a hacker sends more traffic to your site than your site can handle causing a crash.
+
+There are two AWS Shield tiers: 
+
+- AWS Shield
+  - Comes with all new accounts
+- AWS Advanced
+  - This tier will reimburse the attacks
+  - $3,000 a month
+
+### AWS Inspector vs AWS Trusted Advisor vs AWS CloudTrail
+
+**What is AWS Inspector?**
+
+Auto security assessment service that helps improve security and compliance of apps deployed on AWS. Auto assesses apps for vulnerabilitiesand produces a list of findings by level of severity. Findings can be reviewed directly or as part of detailed assessment reports available via the Inspector console or API. The inspector gets installed on your EC2 instances.
+
+![AWS Inspector](img/aws_inspector.png)
+
+**What is Trusted Advisor?**
+
+Helps reduce cost, increase performance, and improve security by optimizing the AWS environment, basically advices on AWS best practices. Not just EC2, looks at whole account.
+
+Two tiers:
+
+- Core checks and recommendations (free)
+- Full trusted advisor (business and enterprise companies only)
+
+Helpful to know the 5 pillars that Trusted Advisor checks for (in image below): **Cost Optimization, Performance, Security, Fault Tolerance, Service Limits**.
+
+![Trusted Advisor Dashboard](img/aws_trusted_advisor_dashboard.png)
+
+**CloudTrail**
+
+Records AWS Management Console actions and API calls, can trail users and accounts to what made the calls when. Think of this like a CCTV camera for AWS account and user activity.
+
+### AWS CloudWatch vs AWS Config
+
+CloudWatch is all about monitoring performance (see [the previous CloudWatch section for more details](#cloudwatch-101)). :bulb: If you see a question about RDS performance that will be related to AWS CloudWatch.
+
+AWS Config, however, is a detailed view of the configuration of your AWS resources in your account including how they relate to one another and how those relationships have changed over time. :bulb: Example exam question can be about locating security group changes, and Config is where you would find that information.
+
+:bulb: The key between these sections is to be able to answer which service, if given a scenario, is the best to use.
+
+### AWS Penetration Testing
+
+What is penetration testing a.k.a. pen testing? Simulating a cyberattack to see how your envrionment stacks up. :bulb: There are **8** services you can run pen tests against without prior approval:
+
+![AWS Penetration Testing](img/aws_pen_testing.png)
+
+To get additional support with pen testing you must contact <aws-security-simulated-event@amazon.com> or [this page](https://aws.amazon.com/security/penetration-testing/).
+
+### AWS Key Management Service (KMS) vs AWS CloudHSM
+
+:bulb: Know the difference between the two and high level details.
+
+KMS: Regional security key management and encryption/decryption. The keys you generate in N. Virginia will not work in Ohio. Manages customer master keys (CMKs). Ideal for S3 objects mostly, but also other things. Integrated with most AWS services. KMS is on _shared hardware_.
+
+CloudHSM: Can do everything that KMS can do and more. Dedicated hardware security module (HSM). FIPS 140-2 Level 3 compliance. Single tenant, dedicated hardware.
+
+### Parameter Store vs Secrets Manager
+
+Both are palces to store passwords.
+
+Paramter Store is for secure serverless storage for configurations and secrets. It is free, but 10,000 parameters per account max.
+
+Secrets Manager is not free and is charged on a per 10k API call basis. Auto rotate secrets, apply new key/password in RDS for you, and generate random secrets.
+
+### Amazon GuardDuty
+
+Uses ML algorithms for anomaly detection in an AWS account / cloudtrail logs. One click to enable for a 30 day trial. Inout data includes CloudTrail, VPC, and DNS logs. Applied to _one account_.
+
+### AWS Control Tower
+
+Allows provision of multiple AWS accounts at once with conformance to company policies. Used for large enterprises with multiple AWS accounts.
+
+### AWS Security Hub
+
+Comprehensive view of your security alerts across multiple accounts. Better than having to log into separate accounts with Trusted Advisor. Alerts and findings can from multiple AWS services like GuardDuty, Inspector, IAM, etc.
+
+### AWS Compomised IAM Credentials
+
+Example: Someone stores their access key or secret access key in their scripts. 
+
+First step is to identify what resources those credentials have access to.
+
+Next invalidate those credentials by suspending and deleting in the IAM service.
+
+Third, consider any temporary security credentials that might have been issued.
+
+Last, restore the appropriate access.
+
+### AWS Athena Vs Macie
+
+**What is Athena?** An interactive query service for analyzing and querying data in S3 using standard SQL. It is serverless and pay per query / per TB scanned. Eliminates need for complex ETL processes. Works directly with data stored in S3.
+
+**What is Macie?** Macie relates to Personally Identifiable Information (PII). Macie is a security service using ML and NLP to discover and protect sensitive data stored in S3. Helps to prevent ID theft and fraud.
