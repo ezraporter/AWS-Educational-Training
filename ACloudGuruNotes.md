@@ -2,7 +2,11 @@
 
 **Author:** Richard Hanna
 
-The purpose of this document is to quickly jot down key notes from the lessons and labs in the AWS Certified Cloud Practitioner Course on A Cloud Guru. This is an admittedly scrawled series of notes and may have some typos :sweat:
+The purpose of this document is to consolidate and highlight key notes from the lessons and labs in the [**AWS Certified Cloud Practitioner**](https://acloudguru.com/course/aws-certified-cloud-practitioner-clf-c01) Course on A Cloud Guru.
+
+This markdown is broken down by chapters in the course, with subsections based on the lectures and labs.
+
+This is an admittedly scrawled series of notes, so please excuse any typos :sweat_smile:
 
 **Symbol Key:**
 
@@ -10,32 +14,34 @@ The purpose of this document is to quickly jot down key notes from the lessons a
 
 ## Cloud Concepts & Technology
 
-Top advantages of cloud computing:
+:bulb: There are several key advantages of cloud computing:
 
 1) Trade **capital expense** for **variable expense** (pay for only what you use)
-2) Benefit from massive economis of sale, you have the same purchasing power as Amazon
+2) Benefit from massive economics of sale, i.e. you as an individual or business have the same purchasing power as Amazon
 3) No need to guess about the capacity you need, you can scale with your business needs
    1) You can even have auto-scaling in line with demand
 4) Increase speed and agility
+   1) You can be up and running with cloud computing extremely quickly compared to when you used to have to contract businesses to set up physical servers for you
 5) Stop spending money on building and running data centers
 6) Go global in minutes
+   1) Leverage availability zone and regional power to cater to audiences globally
 
 **There are 3 types of cloud computing:** :bulb:
 
-1) Infrastructure as a Service (IAAS)
+1) Infrastructure as a Service (**IAAS**)
    1) You manage the server (private or virtual), example: EC2
-2) Platform as a Service (PAAS)
+2) Platform as a Service (**PAAS**)
    1) Ex: GoDaddy and Elastic Beanstalk, no management of underlying hardware
-3) Software as a Service (SAAS)
+3) Software as a Service (**SAAS**)
    1) Ex: GMail. You manage the software like the email inbox, everything else taken care of by Google
 
 **There are 3 Types of Cloud Computing Deployments:** :bulb:
 
-1) Public Cloud - AWS, Azure, GCP
-2) Hybrid
-3) Private Cloud - You manage, openstack or Vmware.
+1) **Public Cloud** - Examples: AWS, Azure, GCP
+2) **Hybrid** - A combination of public and private
+3) **Private Cloud** - You manage the system. Examples: openstack or Vmware
 
-AWS High Level Services / Global Infrastructure included services for this exam:
+While there are many services available on the management console, the AWS High Level Services / Global Infrastructure included for this exam are:
 
 - Compute
   - EC2
@@ -48,24 +54,24 @@ AWS High Level Services / Global Infrastructure included services for this exam:
   - Dynamo DB (non relational)
 - Migration & Transfer
 - Network & Content Delivery
-  - VPC 
+  - VPC
   - Route 53 (DNC service)
 - Security, Identity & Compliance
 - AWS Cost Management
 
 ## Around the world with AWS
 
-AWS Gloabl Infrastructure:
+AWS Global Infrastructure:
 
 There are **19 regions & 57 availability zones**.
 
 - **Regions**: A geographical region (us-east-1 i.e. N. Virginia) with 2+ availability zones
-- **Availability Zones**: A Data center. Big building filled with servers. Could be multiple so an event doesnt take the whole zone offline.
-- **Edge Locations**: end points for AWS caching content. Ex: download a file from New York that can be retrieved from a cacheing server in London
+- **Availability Zones**: A Data center. Big building filled with servers. Could be multiple so an event doesnt take the whole zone offline. _There are always more AZ's than regions._
+- **Edge Locations**: end points for AWS caching content. Ex: download a file from New York that can be retrieved from a cacheing server in London _There are always more edge locations than AZ's (and by proxy, regions)._
 
 :bulb: **Choosing the right AWS region**:
 
-- Data Sovereignty Laws (i.e. Brexit)
+- Data Sovereignty Laws (i.e. Brexit, HIPPA, anything that impacts legality of the data)
 - Latency to end users (i.e. user physical location, N. Virginia server for us)
 - AWS services (i.e. east service gets things first so singapore might get a service later)
 
@@ -78,21 +84,23 @@ There are **19 regions & 57 availability zones**.
    1) One primary contact may ask technical questions and get a response in 12-24 hours
    2) $29/month (scales based on usage)
 3) Business
-   1) 24x7 support and chat, 1 hours response time for urgent cases
+   1) 24x7 support and chat, 1 hour response time for urgent cases
    2) $100/month (scales based on usage)
 4) Enterprise
    1) Recieves an assigned Technical Account Manager (TAM), 15min response to critical cases
    2) $15,000/month (scales based on usage)
 
-## Billing Alarm Set Up :bulb:
+## :bulb: Billing Alarm Set Up
 
-Know how to get auto-notified if your account goes over X amount of dollars.
+Know how to get auto-notified if your account goes over X amount of dollars. In this lesson we set up a billing alarm to notify us if we go over $10.
 
-- Go to CloudWatch
+- Go to _CloudWatch_
   - Set up an alarm
   - Create a rule that says you want to be notified via "Create Topic" and using an "SNS Topic" when your bill goes over $10
 
 ## Identity Access Management (IAM)
+
+:bulb: Know that IAM is a _global_ AWS service!
 
 **MFA Setup**, which is always recommended, can be done using the Google Authenticator app for mobile.
 
@@ -110,7 +118,7 @@ To set up MFA, use a smartphone to download the Google Authenticator app and act
 2) AWS Management Console
 3) Amazon SDK
 
-IAM User policies are always written in JSON format.
+IAM User policies are _always_ written in **JSON** format.
 
 **IAM Password Policy:**
 
@@ -120,7 +128,7 @@ Note: Unlike the video online, to access the IAM password policy you must go to 
 
 :bulb: **Exam Tips**:
 
-- IAM = "Identity access management" and it is a global thing, a region specification is not required.
+- IAM = "Identity access management" and it is a global service, a region specification is not required.
 - 3 different ways to access AWS (see above)
 - The root account is the email address used to set up the account, and you should always set up MFA for this account and keep it secure
   - You should create an admin account to access and not use the root account
@@ -137,7 +145,7 @@ Note: Unlike the video online, to access the IAM password policy you must go to 
 
 "Bucket" = folder.
 
-S3 is a universal namespace, i.e. names must be globally unique.
+:bulb: S3 is a universal namespace, i.e. names must be globally unique.
 
 **"Objects" consist of:**
 
@@ -196,21 +204,24 @@ Cross region replication is replication of a file in one bucket over in another 
 - There is unlimited storage
 - Files are stored in buckets
 - S3 is a universal namespace
-- S3 buckets have URLs following the format: https://s3-eu-west-1.amazonaws.com/acloudguru
+- S3 buckets have URLs following the format: `https://s3-eu-west-1.amazonaws.com/acloudguru`
 - Successful uploads generate a HTTP 200 status code
 - Key fundamentals:
   - Key-value pair
   - Read after write consistency for PUTS of new objects
   - Eventual consistency for overwtie PUTS and DELETES (takes time to propagate)
 - 7 different storage classes (see above)
+  - Know which ones have shorter retrieval times and which have longer ones (like Glacier)
 
 ### Hands on with S3 Bucket
 
-To create a bucket permission policy and change the access of all contents of the bucket, go to Permissions -> Bucket policy and enter the JSON text to control the policy. This can be helpful so you dont have to change the permissions on each individual file. Otherwise selecting the proper things from the "Actions" tab will suffice. Only static files can be hosted as S3 bucket websites, non static things like WordPress cannot.
+To create a bucket permission policy and change the access of all contents of the bucket, go to Permissions -> Bucket policy and enter the JSON text to control the policy. This can be helpful so you dont have to change the permissions on each individual file. Otherwise selecting the proper things from the "Actions" tab will suffice.
+
+Only static files can be hosted as S3 bucket websites, non static things like WordPress cannot. For this you need an EC2 instance.
 
 ### S3 Versioning
 
-Under properties you can access "Bucket Versioning", once enabled you can only suspend versioning it cannot be deleted. Once you upload a new version of an existing file you will be able to see different versions of files under "Objects" >> List Versions.
+Under properties you can access "Bucket Versioning", once enabled you can only suspend versioning and it cannot be deleted. Once you upload a new version of an existing file you will be able to see different versions of files under "Objects" >> "List Versions".
 
 **Exam Tips:**
 
@@ -220,7 +231,7 @@ Under properties you can access "Bucket Versioning", once enabled you can only s
 
 Amazon's content delivery network (CDN) which delivers web pages based on user's location.
 
-**Key Terms:** 
+**Key Terms:**
 
 - Edge Location: Location where content is cached (different from AWS Region/AZ)
   - Not just read only, can also be written to
@@ -231,22 +242,23 @@ Amazon's content delivery network (CDN) which delivers web pages based on user's
     - Web distribution for websites
     - RTMP for media streaming
 
-Cloudfront can be found under "Networking & Delivery". Note that setting up a CloudFront distrubtion can take approximately a half an hour. Cached objects are given a TTL i.e. **Time to Live**.
+CloudFront can be found under "Networking & Delivery". Note that setting up a CloudFront distrubtion can take approximately a half an hour. Cached objects are given a TTL i.e. **Time to Live**.
 
 ### EC2 101: Elastic Compute Cloud
 
-EC2 is a virual server/servers in the cloud. Instantly available and scalable server access.
+EC2 is a virtual server/servers in the cloud. They are instantly available and have scalable server access.
 
-EC2 pricing models:
+:bulb: EC2 pricing models:
 
-1) On Demand: fixed rate buy hour or second with no commitment
-2) Reserved: Contract with a discount but with a 1 or 3 year service contract. Available in standard, convertible, or scheduled reserve instances.
-3) Spot: Enables you to bid whatever price you want to pay for insance capacity and flexibility.
-4) Dediated Hosts: Physical EC2 server dedicated to you.
+1) **On Demand**: fixed rate buy hour or second with no commitment
+2) **Reserved**: Contract with a discount but with a 1 or 3 year service contract. Available in standard, convertible, or scheduled reserve instances.
+   1) Know that Reserved instances are economic and come with a contract, the more and longer you use them the greater your savings.
+3) **Spot**: Enables you to bid whatever price you want to pay for insance capacity and flexibility.
+4) **Dedicated Hosts**: Physical EC2 server dedicated to you.
 
 **EC2 Instance Type Mnemonic:**
 
-Using the images below: "FIGHT DR. MCPXZ in AUstralia"
+Using the images below: "**FIGHT DR. MCPXZ** in **AU**stralia"
 
 ![EC2 Mnemonic](img/ec2_mnemonic.png)
 
@@ -254,14 +266,13 @@ Using the images below: "FIGHT DR. MCPXZ in AUstralia"
 
 A virtual disk in the cloud that creates storage volumes attached to EC2 instances. It comes in two different types:
 
-- SSD 
+- SSD
   - General Purpose SSD (GP2)
   - Provisional IOPS SSD (IO1)
 - Magnetic
   - Throughput Optimized HDD (ST1)
   - Cold HDD (SC1)
   - Magnetic (previous generation)
-
 
 :bulb: **Exam Tips:**
 
@@ -284,7 +295,7 @@ You can create multiple VPC (virtual private clouds) from the VPC management con
 
 ### AWS CLI Tutorial
 
-In the tutorial, the instructor uses an AWS OS. You can still use an Ubuntu instance by updating the Ubuntu system (`sudo apt update`) and then installing the AWS CLI (`sudo apt-get install awscli`).
+In the tutorial, the instructor uses an AWS OS (one of the advantages being the AWS CLI and associated packages are pre-installed). You can still use an Ubuntu instance by updating the Ubuntu system (`sudo apt update`) and then installing the AWS CLI (`sudo apt-get install awscli`).
 
 You can then attempt to programatically make an S3 bucket using `aws s3 mb s3://acloudguru2019-ccp` but this will fail without credentials. Supply the credentials using `aws configure`. Supply the AWS Access Key and Secret Access key of your user. Use `us-east-1` for your region default (not 1a).
 
@@ -319,8 +330,6 @@ To address security concerns over storying access keys in the .aws folder (via `
 - Roles can be applied to EC2 instances at any time and immediately take effect
 - Roles are universal and region agnostic
 
-### Let's Build a Web Server
-
 ### Let's Use A Load Balancer
 
 :bulb: **Exam Tips:**
@@ -331,7 +340,7 @@ To address security concerns over storying access keys in the .aws folder (via `
 
 ### Databases 101
 
-AWS RDS' come in 6 different versions:
+AWS RDS come in 6 different versions:
 
 1) SQL Server (Microsoft)
 2) Oracle
@@ -345,7 +354,7 @@ RDS has 2 key features:
 - Multi AZ for disaster recovery
 - Read replicas for performance (up to 5 copies)
 
-Non-RDSs are set up as follows"
+Non-RDSs are set up as follows:
 
 - Collection = Table
 - Document = Row
@@ -363,7 +372,7 @@ Example:
 }
 ```
 
-Columns can vary and not affect other rows in the database. 
+Columns can vary and not affect other rows in the database.
 
 Two types of processing in terms of executed queries:
 
@@ -376,7 +385,7 @@ The second example is a use case for **data warehousing**. Amazon's data warehou
 
 **What is Elasticache?**
 
-AWS web service that simplifies deployment, operation, and scaling of in memory cache in the cloud. Improves performance o fweb apps for info retrieval instead of relying on slower disk-based databases. 
+AWS web service that simplifies deployment, operation, and scaling of in memory cache in the cloud. Improves performance o fweb apps for info retrieval instead of relying on slower disk-based databases.
 
 > Example: Instead of having a query for every Amazon shopper looking for the top 10 kitchen items, Elasticache saves this information in its servers for a faster return result. Cache's most common queries, while uncommon queries still query the databases.
 
@@ -417,7 +426,7 @@ service httpd start
 chkconfig httpd on
 ```
 
-**Note this does not work when using a CHOP laptop, confirm IP browser viewing on mobile or elsewhere**
+**Note:** this does not work when using a CHOP laptop, confirm IP browser viewing on mobile or elsewhere
 
 Steps taken in this lab:
 
@@ -432,7 +441,7 @@ Steps taken in this lab:
 :bulb: Exam Tips:
 
 - RDS has 2 key features (MultiAZ and Read Replicas)
-- Types of DBs 
+- Types of DBs
 
 ### Let's Look at Auto-Scaling
 
@@ -452,7 +461,7 @@ First we will go to Route 53 where there are 4 options:
 
 > I decided not to do this because the registration would cost $12
 
-It is recommended to have an equivalently named S3 bucket to tie to the domain name. Note that domain registration can take a few hours to up to 3 days (rare). 
+It is recommended to have an equivalently named S3 bucket to tie to the domain name. Note that domain registration can take a few hours to up to 3 days (rare).
 
 :bulb: **Exam Tips**:
 
@@ -480,17 +489,17 @@ All of the notes in this lecture reference [**this white paper**](https://d1.aws
 
 Traditional vs Cloud Computing:
 
-  - IT Assets as Provisioned Resources
-    - You dont have to wait for physically created or contracted set ups
-  - Global, Available, and Scaleable Capacity
-    - AZs and regions allow for anytime anywhere use
-  - Higher level managed services
-  - Built-In security
-    - AWS is more secure than doing things on prem
-  - Architecting for cost
-    - You can build out your infrastructre to the cost you desire
-  - Operations on AWS
-    - Migrate virtual machines into AWS EC2s and RDSs, i.e. refactoring and re-architecting for serverless architecture
+- IT Assets as Provisioned Resources
+  - You dont have to wait for physically created or contracted set ups
+- Global, Available, and Scaleable Capacity
+  - AZs and regions allow for anytime anywhere use
+- Higher level managed services
+- Built-In security
+  - AWS is more secure than doing things on prem
+- Architecting for cost
+  - You can build out your infrastructre to the cost you desire
+- Operations on AWS
+  - Migrate virtual machines into AWS EC2s and RDSs, i.e. refactoring and re-architecting for serverless architecture
 
 Design Principles:
 
@@ -522,7 +531,7 @@ Design Principles:
       1) Example AWS Elastic Beanstalk, Amazon EC2 Auto recovery
    3) Alarms and Events
       1) Cloudwatch alarms and events
-5) Loose Coupling 
+5) Loose Coupling
    1) See lecture
 6) Services Not Servers
 7) Databases
@@ -541,32 +550,32 @@ Design Principles:
 8) Managing Increasing Volumes of Data
    1) Advice: For massive amounts of data a data lake is encouraged in S3
 9) Removing single points of failure
-   1)  Introduce redundancy
-   2)  Detect Failure
-   3)  Have durable data storage
-   4)  Auto multi-data center resilience
-   5)  Fault isolation and traditional horizontal scaling (scaling out instead of up)
-   6)  Sharding (splitting data across multiple shards)
+   1) Introduce redundancy
+   2) Detect Failure
+   3) Have durable data storage
+   4) Auto multi-data center resilience
+   5) Fault isolation and traditional horizontal scaling (scaling out instead of up)
+   6) Sharding (splitting data across multiple shards)
 10) Optimize for cost
-    1)  Right sizing
-    2)  elasticity 
-    3)  take advantage of the purchasing options
+    1) Right sizing
+    2) Elasticity
+    3) Take advantage of the purchasing options
 11) Caching
-    1)  Application caching
-    2)  Edge Caching
+    1) Application caching
+    2) Edge Caching
 12) Security
 
 ### Global AWS Services
 
 :bulb: Which services are global?
 
-- IAM 
+- IAM
 - Route53
 - CloudFront
 - SNS
 - SES
 
-S3 gives global views but is regional. 
+S3 gives global views but is regional.
 
 ### What AWS Services can be used on Premise?
 
@@ -601,11 +610,11 @@ S3 gives global views but is regional.
 
 ### AWS Systems Manager
 
-AWS Systems Manager allows you to monitor EC2 instances _at scale_. Multiple EC2 instances = "EC2 fleet". The systems manager deploys software on each EC2 instance so a command can be run across the fleet. 
+AWS Systems Manager allows you to monitor EC2 instances _at scale_. Multiple EC2 instances = "EC2 fleet". The systems manager deploys software on each EC2 instance so a command can be run across the fleet.
 
 :bulb: Know what this is: manages fleets of EC2 instances by installing software on each machine so patches, installations, etc across a fleet and that the manager integrates with CloudWatch to give a dashboard of entire estate.
 
-### Service Health Dashboard :bulb: 
+### :bulb: Service Health Dashboard
 
 1) Overview of all regions
    1) Health of regions
@@ -614,13 +623,13 @@ AWS Systems Manager allows you to monitor EC2 instances _at scale_. Multiple EC2
 
 Basically know that if there's an outage you can go to this dashboard to locate the problem.
 
-### Personal Health Dashboard :bulb: 
+### :bulb: Personal Health Dashboard
 
 Personalized to your health services with relevant usable info.
 
 What to know: difference between service and personal health dashboards.
 
-### S3 vs EBS vs EFS :bulb:
+### :bulb: S3 vs EBS vs EFS
 
 These are the 3 different storage options, know the difference and what to use when.
 
@@ -643,7 +652,7 @@ These are the 3 different storage options, know the difference and what to use w
 - Like with EBS is a virtual disk in the cloud
 - Can install databases similar to EBS', but will auto grow to handle growing databases unlike EBS
 
-### Global Accelerator :bulb:
+### :bulb: Global Accelerator
 
 Create accelerators and direct traffic over the AWS global network to improve application performance. Basically know that the way to increase reliability and consistency when the internet is congested, you turn to the AWS Global Accelerator.
 
@@ -753,16 +762,16 @@ The notes from this lecture reference the [**AWS white paper here**](https://doc
 
 ### AWS Budgets vs AWS Cost Explorer
 
-**AWS Budgets**
+**AWS Budgets:**
 
 - Set custom budgets that alert you when your costs exceed, or are forecasted to exceed, a budgeted amount
   - Budget costs _before_ they have incurred
 
-**AWS Cost Explorer**
+**AWS Cost Explorer:**
 
 - Visualize and manage costs _after_ they have incurrred
 
-**AWS Support Plans**
+**AWS Support Plans:**
 
 - Basic
 - Developer
@@ -823,7 +832,7 @@ Requirements for businesses to become partners involve employees filling out the
 
 ![Partner Certs](img/aws_partner_certs.png)
 
-### AWS Calculators :bulb:
+### :bulb: AWS Calculators
 
 2 calculators are available:
 
@@ -832,3 +841,13 @@ Requirements for businesses to become partners involve employees filling out the
 2) [**AWS Total Cost of Ownership Calculator**](https://calculator.aws/#/)
    1) Ex: What is the total cost of having your products on prem versus in the cloud?
    2) Creates reports to show finance teams and drive business decisions
+
+## Security in the Cloud
+
+### Compliance on AWS & AWS Artifact
+
+To verify how and why AWS is compliant with various organizations (like HIPPA) you can check out their resources and white paper on the [**AWS Compliance site**](https://aws.amazon.com/compliance/?nc=sn&loc=3) and a list of their [**compliance programs**](https://aws.amazon.com/compliance/programs/) (including HIPPA).
+
+You can also find all of these within the management console under "AWS Artifact" and get the "artifact" tied with that compliance report.
+
+### AWS Shared Responsibility Model
