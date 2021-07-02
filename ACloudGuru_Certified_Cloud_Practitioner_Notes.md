@@ -255,6 +255,7 @@ EC2 is a virtual server/servers in the cloud. They are instantly available and h
    1) Know that Reserved instances are economic and come with a contract, the more and longer you use them the greater your savings.
 3) **Spot**: Enables you to bid whatever price you want to pay for insance capacity and flexibility.
 4) **Dedicated Hosts**: Physical EC2 server dedicated to you.
+   1) Require special :bulb: **licensing requirements**. All exam questions related to licensing are related to _dedicated hosts_. Licensing can be for Windows Server, Microsoft SQL server, etc.
 
 **EC2 Instance Type Mnemonic:**
 
@@ -852,7 +853,7 @@ You can also find all of these within the management console under "AWS Artifact
 
 ### :bulb: AWS Shared Responsibility Model
 
-AWS manages security of the cloud, but the security of what is placed _in_ the cloud lies in the hands of the customer. You maintain and retain control of what security will be implemented and it is your responsibility to protect your content, platform, apps, etc. 
+AWS manages security of the cloud, but the security of what is placed _in_ the cloud lies in the hands of the customer. You maintain and retain control of what security will be implemented and it is your responsibility to protect your content, platform, apps, etc.
 
 Here's an example. Amazon is responsible for maintaining the data centers where servers are physically located, but you as a customer are responsible for keeping your EC2 instances updated. If an EC2 instance is hacked because you didn't update it, that's on you.
 
@@ -867,11 +868,11 @@ All notes about this can be found on the [**AWS Shared Responsibility Model page
 
 ### AWS WAF (Web Application Firewall) & AWS Shield
 
-AWS WAF is a firewall that protects web apps from common exploits. For example, the firewall will monitor traffic and stop cross-site scripting or SQL injections at the application before they make it to the databases or load balancers. 
+AWS WAF is a firewall that protects web apps from common exploits. For example, the firewall will monitor traffic and stop cross-site scripting or SQL injections at the application before they make it to the databases or load balancers. Operates at layer 7.
 
 AWS Shield is a managed Distrbuted Denial of Service (DDoS) protection service safeguarding web apps on AWS. Basically this will stop DDoS attacks, i.e. when a hacker sends more traffic to your site than your site can handle causing a crash.
 
-There are two AWS Shield tiers: 
+There are two AWS Shield tiers:
 
 - AWS Shield
   - Comes with all new accounts
@@ -900,7 +901,7 @@ Helpful to know the 5 pillars that Trusted Advisor checks for (in image below): 
 
 ![Trusted Advisor Dashboard](img/aws_trusted_advisor_dashboard.png)
 
-**CloudTrail**
+**What is CloudTrail?**
 
 Records AWS Management Console actions and API calls, can trail users and accounts to what made the calls when. Think of this like a CCTV camera for AWS account and user activity.
 
@@ -950,7 +951,7 @@ Comprehensive view of your security alerts across multiple accounts. Better than
 
 ### AWS Compomised IAM Credentials
 
-Example: Someone stores their access key or secret access key in their scripts. 
+Example: Someone stores their access key or secret access key in their scripts.
 
 First step is to identify what resources those credentials have access to.
 
@@ -965,3 +966,62 @@ Last, restore the appropriate access.
 **What is Athena?** An interactive query service for analyzing and querying data in S3 using standard SQL. It is serverless and pay per query / per TB scanned. Eliminates need for complex ETL processes. Works directly with data stored in S3.
 
 **What is Macie?** Macie relates to Personally Identifiable Information (PII). Macie is a security service using ML and NLP to discover and protect sensitive data stored in S3. Helps to prevent ID theft and fraud.
+
+## Advanced AWS Concepts
+
+### :bulb: AI Services: Lex, Polly, Transcribe, and Rekognition
+
+**Lex:** Powers Amazon's Alexa, a service that builds conversational chatbots. Powered by voice or text.
+
+**Polly:** Text to life-like voice. Polly essentially returns the Alexa voice you hear, makes computer speak sound human.
+
+**Transcribe:** Coverts speech into text, helps to generate subtitles or getting transcripts.
+
+**Rekognition:** Converts images into tags/text. Think of an eyeball registering images. Example is an app that identifies photos of plants.
+
+### :bulb: Different Compute Services
+
+Exam questions may give scenarios where you will specify which of the following is most applicable:
+
+- **EC2**: Virtual Machines in cloud
+- **Lightsail**: Simple cloud servers. You pick the VM and size and it gets deployed. EC2 has much more custmization
+- **Lambda**: Serverless computing in the cloud
+- **Batch**: Compute service for batch computing
+- **Elastic Beanstalk**: PaaS
+- **Severless Application Repository**: Allows you to deploy pre-provisioned serverless apps (i.e. Alex skills)
+- **AWS Outposts**: Extending compute to your own data centers on-prem
+- **EC2 Image Builder**: Helps you build custom EC2 images for Linux and Windows
+
+### AWS VPC
+
+VPC = "Amazon Virtual Private Cloud"
+
+Lets you provision a logically isolated section of the AWS cloud in a virtual network you define. Essentially lets you launch EC2 instances. You have full control over VPCs. **Essentially a virtual data center in the cloud.** You can connect a VPC to a VPN (hardware virtual private network).
+
+To connect on-prem to your VPC you can:
+
+- Create a VPN as an extension of your corporate network and data center.
+- AWS Direct Connect, a physical line that goes to AWS for private connectivity instead of internet based connections. This increases bandwidth, reliability, etc. You can even do a VPN over Direct Connect for ultimate security. This allows for encryption as well.
+
+### AWS Lambda
+
+What is Lambda?
+
+Everytime you talk to Alexa, you are talking to Lambda. Removes the management of data centers, OSs, assembly code, etc. All you worry about is your code and upload it. It is an event driven compute service that can run your code in response to events such as changes to data in S3 or Dynamo DB tables.
+
+:bulb: Supported Languages: Node.js, C#, Java, Go, Python, PowerShell
+
+:bulb: Lambda is priced by number of requests and durations of code execution.
+
+:bulb: You can have version control to have multiple versions of your Lambda code.
+
+Pros: No servers, continuous scaling, super cheap!
+
+**Exam Tips:**
+
+- Lambda scales **out** automatical (not up)
+- Lambda functions are **independent** (1 event = 1 function)
+- Labda is **serverless**
+- Lambda is priced by **requests** and by **execution time**
+- You can have multiple versions of code in Lambda
+- Understand that you are responsible for your code, but Amazon is responsible for the hardware, OS, security patching, virus protection, etc.
