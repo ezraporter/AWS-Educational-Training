@@ -242,7 +242,7 @@ Amazon's content delivery network (CDN) which delivers web pages based on user's
     - Web distribution for websites
     - RTMP for media streaming
 
-CloudFront can be found under "Networking & Delivery". Note that setting up a CloudFront distrubtion can take approximately a half an hour. Cached objects are given a TTL i.e. **Time to Live**.
+CloudFront can be found under "Networking & Delivery". Note that setting up a CloudFront distribution can take approximately a half an hour. Cached objects are given a TTL i.e. **Time to Live**.
 
 ### EC2 101: Elastic Compute Cloud
 
@@ -250,7 +250,7 @@ EC2 is a virtual server/servers in the cloud. They are instantly available and h
 
 :bulb: EC2 pricing models:
 
-1) **On Demand**: fixed rate buy hour or second with no commitment
+1) **On Demand**: fixed rate by hour or second with no commitment
 2) **Reserved**: Contract with a discount but with a 1 or 3 year service contract. Available in standard, convertible, or scheduled reserve instances.
    1) Know that Reserved instances are economic and come with a contract, the more and longer you use them the greater your savings.
 3) **Spot**: Enables you to bid whatever price you want to pay for insance capacity and flexibility.
@@ -870,7 +870,7 @@ All notes about this can be found on the [**AWS Shared Responsibility Model page
 
 AWS WAF is a firewall that protects web apps from common exploits. For example, the firewall will monitor traffic and stop cross-site scripting or SQL injections at the application before they make it to the databases or load balancers. Operates at layer 7.
 
-AWS Shield is a managed Distrbuted Denial of Service (DDoS) protection service safeguarding web apps on AWS. Basically this will stop DDoS attacks, i.e. when a hacker sends more traffic to your site than your site can handle causing a crash.
+AWS Shield is a managed Distributed Denial of Service (DDoS) protection service safeguarding web apps on AWS. Basically this will stop DDoS attacks, i.e. when a hacker sends more traffic to your site than your site can handle causing a crash.
 
 There are two AWS Shield tiers:
 
@@ -890,7 +890,7 @@ Auto security assessment service that helps improve security and compliance of a
 
 **What is Trusted Advisor?**
 
-Helps reduce cost, increase performance, and improve security by optimizing the AWS environment, basically advices on AWS best practices. Not just EC2, looks at whole account.
+Helps reduce cost, increase performance, and improve security by optimizing the AWS environment, basically advises on AWS best practices. Not just EC2, looks at whole account.
 
 Two tiers:
 
@@ -931,7 +931,7 @@ CloudHSM: Can do everything that KMS can do and more. Dedicated hardware securit
 
 ### Parameter Store vs Secrets Manager
 
-Both are palces to store passwords.
+Both are places to store passwords.
 
 Paramter Store is for secure serverless storage for configurations and secrets. It is free, but 10,000 parameters per account max.
 
