@@ -1025,3 +1025,25 @@ Pros: No servers, continuous scaling, super cheap!
 - Lambda is priced by **requests** and by **execution time**
 - You can have multiple versions of code in Lambda
 - Understand that you are responsible for your code, but Amazon is responsible for the hardware, OS, security patching, virus protection, etc.
+
+## Other Exam Notes:
+
+- The **5 pillars of a Well Architected Framework** - Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization.
+- Auto Scaling vs Elastic Load Balancing:
+  - AWS Auto Scaling monitors your applications and automatically adjusts your capacity to maintain steady, predictable performance at the lowest possible cost. Using AWS Auto Scaling, it’s easy to set up application scaling for multiple resources across multiple services in minutes.
+  - Load Balancers do not scale instances in and out; they manage the traffic load between existing instances.
+- Route 53 related to any re-routing of traffic or DNS migration and management.
+- AWS Partner Network (AP) Consulting Partners are professional services firms that help customers of all types and sizes design, architect, build, migrate, and manage their workloads and applications on AWS, accelerating their journey to the cloud. APN Consulting Partners often implement Technology Partner solutions in addition to the professional services they offer.
+- Amazon Simple Queue Service (SQS) is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications. Allows you to send and recieve messages as well as store them.
+- To accomplish distribution of traffic across multiple EC2 instances and AZs, use an Elastic Load Balancer. ELBs automatically distribute incoming application traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, and Lambda functions. They can handle the varying load of your application traffic in a single Availability Zone or across multiple Availability Zones.
+- Amazon Simple Notification Service (SNS) allows apps to send time-critical messages to multiple subscribers through a "push" mechanism. It is not queuing system and so does not ensure messages are not lost if software fails.
+- AWS CodeStar is a cloud-based service for creating, managing, and working with software development projects on AWS. You can quickly develop, build, and deploy applications on AWS with an AWS CodeStar project.
+- Network Load Balancers are best used for TCP, UDP, and TLS traffic. HTTP and HTTPS are best used with Application Load Balancers.
+- AWS's Git-based repo service is "AWS CodeCommit".
+- An **internet gateway** is a horizontally scaled, redundant, and highly available VPC component that allows communication between your VPC and the internet. An internet gateway serves two purposes: to provide a target in your VPC route tables for internet-routable traffic, and to perform network address translation (NAT) for instances that have been assigned public IPv4 addresses.
+- **Amazon Kinesis** makes it easy to collect, process, and analyze real-time, streaming data so you can get timely insights and react quickly to new information.
+- A **network access control list (ACL)** is an optional layer of security for your VPC that acts as a firewall for controlling traffic in and out of one or more subnets. A security group acts as a virtual firewall for your instance to control inbound and outbound traffic. **Security groups act at the instance level, not the subnet level.**
+- **IAM Language**
+  - An **Identity** is an IAM resource object that is used to identify and group. You can attach a policy to an IAM identity. These include users, groups, and roles.
+  - IAM **entities** are the users (IAM users and federated users) and roles that are created and used for authentication.
+  - A **Principal** is a person or application that uses the AWS account root user, an IAM user, or an IAM role to sign in and make requests to AWS.
