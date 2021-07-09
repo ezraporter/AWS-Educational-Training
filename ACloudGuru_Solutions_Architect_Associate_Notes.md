@@ -107,3 +107,18 @@ Sample JSON notation for a policy can look something like this:
 
 Which is essentially an admin policy allowing all actions for all resources.
 
+### Permanent IAM Credentials
+
+- User = One physical person
+- Group = Users grouped by a function (ex: admin, dev, etc)
+- Roles = Internal usage within AWS
+
+IAM policies should always be applied to Groups instead of individual Users.
+
+**:bulb: The Principle of Least Privilege** is the assignment of the minimum privileges a user needs to do their job.
+
+Note: PowerUserAccess, i.e. PowerUsers, are basically admin but they can't create users or groups and don't have access privileges to those in IAM.
+
+:bulb: **Exam Note**: If you ever see a question about making your username and password the same as your AWS log in account it is related to **Active Directory Federation** using the SAML standard.
+
+Also note that new users come with no permissions when they are first created, permissions _must_ be assigned to them.
