@@ -68,3 +68,42 @@ Read here to review the **[5 Pillars of the Well-Architected Framework](https://
    1) Focuses on using IT and computing resources efficiently
 5) Cost Optimization
    1) Focuses on avoiding unnecessary costs
+
+## Identity and Access Management (IAM)
+
+### Securing the Root Account
+
+The root account for AWS is the email address used to sign up for AWS, it has full admin access and is extremely important to keep secure.
+
+One of the best things to do immediately is to turn on multi-factor authentication for the root account using a resource like Google's MFA service. This can be done under IAM.
+
+There are 4 steps to securing a root account:
+
+1) Enable MFA
+2) Create an admin group for admins and assign appropriate permissions to it
+3) Create user accounts for admins
+4) Add those users to the admin group
+
+### Controlling Users' Actions with IAM
+
+Permissions are assigned to users using policy documents. Policy documents are made using JSON files. :bulb: **You will need to know how to read JSON files for the exam!** Policy documents can be assigned to groups, users, and roles though it is typically frowned upon to assign to and manage policies at the user level. It is better to assign users to groups and have users inherit permissions from those groups.
+
+> :bulb: Note that IAM is a global service and not a regional one!
+
+Sample JSON notation for a policy can look something like this:
+
+```JSON
+{
+   "Version": "2017-10-17",
+   "Statement": [
+      {
+         "Effect": "Allow",
+         "Action": "*",
+         "Resource": "*"
+      }
+   ]
+}
+```
+
+Which is essentially an admin policy allowing all actions for all resources.
+
