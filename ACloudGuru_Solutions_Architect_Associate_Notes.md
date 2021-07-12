@@ -122,3 +122,9 @@ Note: PowerUserAccess, i.e. PowerUsers, are basically admin but they can't creat
 :bulb: **Exam Note**: If you ever see a question about making your username and password the same as your AWS log in account it is related to **Active Directory Federation** using the SAML standard.
 
 Also note that new users come with no permissions when they are first created, permissions _must_ be assigned to them.
+
+**Exam Notes :bulb:**
+
+- "EAR" in a policy document stands for: "Effect, Action, Resource" (see the example in the JSON above!)
+- IAM users are considered "permanent" because user credentials don't automatically rotate, making them "permanent" without manual human interaction.
+- "deny" statements will always override "allow" statements, not the other way around
