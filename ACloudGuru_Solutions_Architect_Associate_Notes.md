@@ -128,3 +128,37 @@ Also note that new users come with no permissions when they are first created, p
 - "EAR" in a policy document stands for: "Effect, Action, Resource" (see the example in the JSON above!)
 - IAM users are considered "permanent" because user credentials don't automatically rotate, making them "permanent" without manual human interaction.
 - "deny" statements will always override "allow" statements, not the other way around
+
+## Simple Storage Service (S3)
+
+### S3 Overview
+
+- S3 is basically a hard drive in the cloud for object storage for files, _not_ for operating systems.
+- S3 has unlimited storage and objects can be as large as 5 TB.
+- S3 is a univeral namespace, so every S3 bucket name must be unique.
+  - S3 URLs always follow the formula `https://bucket-name.s3.Region.amazonaws.com/key-name`
+    - i.e. `https://acouldguru.s3.us-east-1.amazonaws.com/Ralphie.jpg`
+- S3 successful browser uploads return a HTTP 200 code
+- S3 works with key-value stores
+  - key = name of the object
+  - value = byte sequence of the data itself
+  - version ID
+  - Metadata = data about the data
+- S3 is extremely safe and secure, data is always spread across multiple devices and multiple facilities. Makinging it highly available and durable.
+
+#### Tiers of S3
+
+**S3 Standard:**
+
+- High availability and durability
+- Frequently accessed
+- Suitable for most workloads
+
+Data Security is made possible via:
+
+- Server-side encryption: user-set encryption on a bucket to encrypt, for example, all new objects when stored in the bucket
+- Access Control Lists (ACLs): ACLs define which AWS accounts or groups can access and the types of access. ACLs can also be attached to individual objects in a bucket
+- Bucket Policies: Specific policies for what actions are allowed or denied  such as PUTs and DELETEs
+
+
+:bulb: S3 buckets have strong **Read-After-Write Consistency** so after every successful write of a new object (PUT) or overwrite of existing objects, subsequent read requests are immediately available. They also have strong consistency for list operations, so after a write you can immediately perform a listing of the objects in the bucket and see the changes.
