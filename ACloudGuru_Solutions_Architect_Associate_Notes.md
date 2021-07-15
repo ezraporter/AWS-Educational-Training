@@ -160,5 +160,90 @@ Data Security is made possible via:
 - Access Control Lists (ACLs): ACLs define which AWS accounts or groups can access and the types of access. ACLs can also be attached to individual objects in a bucket
 - Bucket Policies: Specific policies for what actions are allowed or denied  such as PUTs and DELETEs
 
-
 :bulb: S3 buckets have strong **Read-After-Write Consistency** so after every successful write of a new object (PUT) or overwrite of existing objects, subsequent read requests are immediately available. They also have strong consistency for list operations, so after a write you can immediately perform a listing of the objects in the bucket and see the changes.
+
+### Securing Your Buckets with S3 Block Public Access
+
+:bulb: Bucket policies apply to entire bucket levels, while object Access Control Lists (ACLs) work on an individual object level.
+
+To make an individual S3 bucket object public, check the object in the list inside the bucket and select "Make Public" in the drop down options for the object.
+
+To make the bucket itself public, you have to open the bucket permissions and uncheck the block accesses. Note that if the bucket itself is private and you make an object public, the bucket policy will provide an error and override the object declaration. However, a bucket can be public while an object underneath can remain private.
+
+- Buckets are private by default
+- Successful object uploads result in a HTTP 200 status code
+
+### Hosting a Static Website Using S3
+
+Examples include HTML/.html sites.
+
+S3 scales automatically to meet demand, so for static sites you dont have to worry about load balancing or auto scaling.
+
+In this lesson we create a static webpage using a Bucket Policy in JSON (below) and an HTML file (below):
+
+**Bucket Policy**
+```JSON
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "PublicReadGetObject",
+			"Effect": "Allow",
+			"Principal": "*",
+			"Action": [
+				"s3:GetObject"
+			],
+			"Resource": [
+				"arn:aws:s3:::BUCKET_NAME/*"
+			]
+		}
+	]
+}
+```
+
+**HTML Content**
+```HTML
+# index.html
+
+<html>
+	<title>
+		<head>Hello Cloud Gurus</head>
+	</title>
+	<body>
+		<div align="center">
+			<h1>Hello Cloud Gurus!</h1>
+			<img src="https://s3.amazonaws.com/acloudguruimages/ACG.jpg">
+		</div>
+	</body>
+</html>
+
+# error.html
+
+<html>
+	<title>
+		<head>Error Cloud Gurus</head>
+	</title>
+	<body>
+		<div align="center">
+			<h1>Sorry Cloud Gurus, there has been an error!</h1>
+			<img src="https://s3.amazonaws.com/acloudguruimages/acg2.png">
+		</div>
+	</body>
+</html>
+```
+
+After creating the bucket and opening access, there is an option under "Properties" for static website hosting enabling. There, you will specify your index and error HTML files that will be loaded. The properties page gives a URL to visit.
+
+The HTML files are uploaded to the bucket and the policy is applied to the bucket by editing the bucket policy and pasting the JSON above. This allows you to get to the web page by clicking on the link under the bucket properties.
+
+:bulb: Exam Tip: Anything related to "static" websites relates to S3.
+
+### Versioning Objects in S3
+
+Objects in S3 buckets can have multiple versions. This lets you have all versions of all writes of you objects and even deletes, making it a good back up solution. Though you must note that once versioning is enabled it can never be disabled, only suspended. Versioning also supports multi-factor authentication :bulb:, this can prevent accidental deletion of multiple versions of an object.
+
+Versioning can be found under bucket Properties, and enabling bucket versioning. In the lecture, a second version of the index.html file is uploaded, and when viewing the bucket objects you can see branching versions of the objects. 
+
+Note that once a new version is uploaded, previous versions no longer become public even if the bucket policy is public! :bulb: You would have to make the specific object public.
+
+When the index.html object gets deleted, at the top level view it appears no index.html object exists, however by clicking on list versions all 3 versions of the index file are shown still with a "Delete marker" next to it. By deleting the "Delete marker" you can restore the object.
