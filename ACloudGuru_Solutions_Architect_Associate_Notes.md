@@ -250,7 +250,7 @@ When the index.html object gets deleted, at the top level view it appears no ind
 
 ### :bulb: S3 Storage Classes
 
-- **S3 Standard**: High availability and frequent access. The default set up. 
+- **S3 Standard**: High availability and frequent access. The default set up.
 - **S3 Standard-Infrequent Access**: Rapid access but you pay to access the data. Great for long-term storage, backups, etc.
 - **S3 One Zone-Infrequent Access**: Like S3 Standard IA, but in one single Availability Zone. 20% less cost than regular S3 IA. Great for long lived, IA, non-critical data.
 - **S3 Glacier**: Provides long-term data archiving with retrieval times of 1minute to 12 hours. Very cheap, optimized for very infrequent access, every time you access you pay. :bulb: "archiving" = _glacier services_
@@ -269,9 +269,75 @@ Example: You have an object you put in S3 Standard but it doesnt get used for 30
 
 Lifecycle management can be combined with versioning. Lifecycle management rules can be found in your bucket under "Lifecycle configuration" where you can "Create lifecycle rule".
 
-:bulb: **Exam Tips:** 
+:bulb: **Exam Tips:**
 
 - Automates moving objects between different storage tiers
 - Can be used with versioning
 - Can be applied to current and previous verisons
 
+### S3 Object Lock and Glacier Vault Lock
+
+:bulb: S3 Object Lock is used to store object using a **write once, read many (WORM)** model to preven objects from being deleted or modigied for a fixed amount of time or indefinitely. S3 Object Lock can be used to meet regulatory requirements mandating WORM storage for extra protection against object changes or deletions.
+
+S3 Object Lock Modes:
+
+- **Governance Mode:** Users can't overwrite or delete an object version or alter its lock settings without permissions. This protects objects against deletion by most users, but you can still alter or grant permisions to allow it if necessary
+- **Compliance Mode:** Ensures no one can delete or overwrite objects including the root users. This mode ensures an object version can't be overwritten or deleted for the duration of the fixed retention period (a defined retention period can't be shortened).
+  - **Retention periods** protect an object version for a fixed amount of time, afterwards it can be overwritten or deleted
+  - **Legal Holds** are like retention periods in that they prevent object overwrites or deletions, however a legal hold doesn't have an assocaited retention period. It remains in effect until it is removed
+    - Only removable by users with the `s3:PutObjectLoegalHold` permission
+
+**Glacier Vault Lock** allows deployment and enforcement of complaince controls for individual S3 Glacier vaults. **Basically it applies the WORM model to Glacier Vaults.** :bulb:
+
+### Encrypting S3 Objects
+
+**Types of Encryption:** :bulb:
+
+- Encryption in Transit
+  - Objects being sent to and from the bucket
+  - SSL/TLS
+  - HTTPS (S means encrption using SSL over port 443)
+- Encryption at Rest: Server-Side Encryption
+  - SSE-S3: S3-managed keys, using AES 256-bit encryption (most common type)
+  - SSE-KMS: AWS Key Management Service-managed keys
+  - SSE-C: Customer provided keys
+- Encryption at Rest: Client-Side Encryption
+  - You encrypt the files yourself before uploading to S3
+
+Two ways to enforce server-side encryption:
+
+- Console via ecnryption setting selection on your S3 bucket, easiest way is just a checkbox on the console
+- Bucket policy via enforcing encryption using a policy :bulb:
+
+When enforcing server-side encryption, anytime you upload a file you have a PUT request. `x-amz-server-side-encryption` is included as a parameter in the request header and has one of two options:
+
+- `x-amz-server-side-encryption: AES256` (SSE-S3 S3 Managed Keys)
+- `x-amz-server-side-encryption: aws:kms` (SSE-KMS - KMS-managed keys)
+
+When the parameter is included it tells S3 to encrypt on upload using these parameters. This can allow you to deny PUT requests that don't have these parameters.
+
+### Optimizing S3 Performance
+
+:bulb: **S3 Prefixes:** The folders inside the buckets.
+![S3 Prefixes](img/s3_prefixes.png)
+
+**S3 Performance:** Extremely low latency, the first byte out of S3 can be retrieved in 100-200 miliseconds. If you want better performance, you would spread your "reads" across different prefixes/directories. If one prefix gets you 11,000 requests per second, then 4 prefixes gets you 4x that.
+
+:bulb: If using SSE-KMS, there are some limitations. Encrypted objects have KMS limits. When you upload a file you will call `GenerateDataKey` in the KMS API and when you download a file you will call `Decrypt`. KMS has request rates that can't be changed, so encryption rates are better off using S3 and _not_ KMS.
+
+:bulb: **S3 Performance: Uploads & Downloads**
+
+- Multipart Uploads: Recommended for >100mb file size, required for files >5Gb, parallelize uploads to increase efficiency
+  - Split a big file into little files and upload at the same time
+- S3 Byte Range Fetches: Parallelize downloads by specifying byte ranges, making failures in the download only in that byte range
+  - Split a big file into small chunks for parallel downloads
+
+### Backing Up Data with S3 Replication
+
+What is S3 Replication?
+
+> Replicating objects from one bucket to another. It requires versioning enabled in source and destination buckets. Objects in an existing bucket are not replicated automatically, and delete markets are not replicated by default (though you can turn them on).
+
+Replication is under Management -> Lifecycle Management -> Replication Rules. Here you will pick your source bucket, objects, and destination bucket.
+
+Replication requires an IAM role, but one can be autocreated by default.
