@@ -341,3 +341,20 @@ What is S3 Replication?
 Replication is under Management -> Lifecycle Management -> Replication Rules. Here you will pick your source bucket, objects, and destination bucket.
 
 Replication requires an IAM role, but one can be autocreated by default.
+
+## Elastic Compute Cloud (EC2)
+
+### EC2 Overview
+
+**There are (4) EC2 Pricing Options:**
+
+![EC2 Instance Pricing Options](/img/ec2_pricing_options.png)
+
+- **On Demand**: Low cost and flexible, best for short-term or spiky/unpredictable workloads. Best for testing and development purposes.
+- **Reserved**: Predictable, steady state usage with specific capacity requirements. Allows you to pay up front (the more you pay the more you save).
+  - Convertible Reserved saves less than standard reserved but still more than on demand.
+  - Scheduled reserved lets you match capacity to requirements for, example, daytime working hours.
+  - Reserved instances operate on a regional level
+- **Spot Instances**: Applications with flexible stop and end times, not useful for websites because when you reached capacity your instance will get terminated. They are cost sensitive and good for urgent needs of additional computing capacity.
+- **Dedicated Hosts**: Can be good for compliance requirements, licensing. Can be purchased on-demand (hourly) or reserve them for a discount.
+
