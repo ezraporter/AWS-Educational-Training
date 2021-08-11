@@ -358,3 +358,120 @@ Replication requires an IAM role, but one can be autocreated by default.
 - **Spot Instances**: Applications with flexible stop and end times, not useful for websites because when you reached capacity your instance will get terminated. They are cost sensitive and good for urgent needs of additional computing capacity.
 - **Dedicated Hosts**: Can be good for compliance requirements, licensing. Can be purchased on-demand (hourly) or reserve them for a discount.
 
+### AWS Command Line
+
+To access the EC2 instance, ensure that your .pem key is accessible and the permissions are correct (if they aren't, `chmod 400 <yourkeyname>.pem`).
+
+Connect to the EC2 instance using `ssh ec2-user@<ip> -i <yourkeyname>.pem`.
+
+If you have an appropriate IAM configured through the AWS CLI, you can use `aws ls s3` to list all available buckets. Similarly you can create a bucket using `aws s3 mb s3://<bucketname>` to make a new bucket programmatically.
+
+To create a file for the bucket:
+
+```bash
+aws s3 cp <yourtextsamplefile.txt> s3://<bucketname>
+```
+
+### Using Roles
+
+**Roles are temporary**, they do not have standard long-term credentials the same way passwords or access keys do. Instead a user assumes a role and the role provides temporary security credentials for the role session.
+
+Roles are:
+
+- The preferred security option
+- Allow avoidance of hard coding credentials
+- Use policies to control permissions
+- Allow for policy updates attached to roles for immediate effect
+- Can be attached and detached from running EC2 instances without stopping the instances
+
+### Security Groups & Bootstrap Scripts
+
+Ports for computer communication:
+
+- Linux SSH: Port 22
+- Windows RDP: Port 3389
+- HTTP Web Browsing: Port 80
+- HTTPS Encrypted Web Browsing (SSL): Port 443
+
+Security groups are **virtual firewalls for your EC2 instance**. By default everything is blocked.
+
+**Bootstrap scripts** are scripts that run when the instance first starts. In the lecture demo there is a sample SSH bootstrap script that you simply paste under "Advanced details" in "User Data" for the bootstrap startup commands.
+
+```bash
+# Sample bootstrap script
+#!/bin/bash
+yum update -y
+yum install httpd -y
+systemctl start httpd
+systemctl enable httpd
+cd /var/www/html
+echo "<html><body><h1>Hello Cloud Gurus</h1></body></html>" > index.html
+```
+
+Paste the above commands here:
+
+![Bootstrap Example](/img/ec2_bootstrap_example.png)
+
+:bulb: Exam Tips:
+
+- Changes to security groups take place immediately
+- You can have any number of EC2 instances in a security group
+- You can have multiple security groups attached to an EC2 instance
+- All inbound traffic is blocked by default
+- All outbound traffic is allowed by default
+
+Bootstrap scripts are an example of **user data**.
+### EC2 Metadata and User Data
+
+Metadata = data about data. EC2 metadata = data about the EC2 instance.
+
+To retrieve metadata use the command:
+
+```bash
+curl http://169.254.169.254/latest/meta-data/
+```
+
+In this lecture, we combine **user data** with **meta data** by running the below bootstrap script to save out IP address to a text file on startup:
+
+```bash
+#!/bin/bash
+yum update -y
+yum install httpd -y
+service httpd start
+cd /var/www/html
+echo "<html><body><h1>My IP is" > index.html 
+curl http://169.254.169.254/latest/meta-data/public-ipv4 >> index.html
+echo "</h1></body></html>" >> index.html 
+```
+
+While in the EC2 instance itself you can use the same `curl` command above to see a list of options for metadata selection including iPv4 address and many other things.
+
+### Networking with EC2
+
+There are 3 types of virtual networking cards for EC2 instances:
+
+![EC2 virtual networking options](/img/ec2_virtual_networking_options.png)
+
+ENI is a virtual network card best for creating a management network and used in network and security appliances in your VPC. You can create dual-homed instances with workloads/roles on distinct subnects. **It is low budget and high availability**.
+
+EN is for high performance networking. Can use an elastic network adapter (ENA) or an intel virtual function interface (VF). :bulb: **If an exam question asks about which of these two to use, you almost always want to use the ENA over the VF**.
+
+EFA is a network device to accelerate **high performance computing and machine learning computations**. They can also use an **OS-Bypass** allowing for faster processing and lower latency. :bulb:
+
+![EC2 Networking Summaries](/img/ec2_networking_summaries.png)
+
+### Optimizing with EC2 Placement Groups
+
+There are 3 Types of Placement Groups:
+
+- Cluster
+- Spread
+- Partition
+
+**Cluster Placement Groups** are groups of EC2 instances in a single AZ. Recommended for apps that need low network latency, high network throughput, or both. Only certain instance types can be launched through these (GPU optimized, compute optimized, memory optimized, storage optimized). AWS recommends **homogenous instances** within cluster placement groups.
+
+**Spread Placement Groups** are a group of instances placed on distinct underlying hardware. Best for apps that have a small number of critical instances that should be kept separate from each other.
+
+**Partition Placement Groups** are groups of instances where each group has its own set of racks, allowing for isolation of hardware failure. Multiple EC2 instances; HDFS, HBase, and Cassandra.
+
+You cannot merge placement groups. You can move an existing instance into a placement group, but it must be in a stopped state (can only be done with AWS CLI or SDK).
