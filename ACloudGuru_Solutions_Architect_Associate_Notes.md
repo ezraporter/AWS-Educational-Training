@@ -421,6 +421,7 @@ Paste the above commands here:
 - All outbound traffic is allowed by default
 
 Bootstrap scripts are an example of **user data**.
+
 ### EC2 Metadata and User Data
 
 Metadata = data about data. EC2 metadata = data about the EC2 instance.
@@ -475,3 +476,31 @@ There are 3 Types of Placement Groups:
 **Partition Placement Groups** are groups of instances where each group has its own set of racks, allowing for isolation of hardware failure. Multiple EC2 instances; HDFS, HBase, and Cassandra.
 
 You cannot merge placement groups. You can move an existing instance into a placement group, but it must be in a stopped state (can only be done with AWS CLI or SDK).
+
+### Solving Licensing Issues with Dedicated Hosts
+
+Reminders: Dedicated hosts are one of the more expensive options but are great for compliance and licensing and they come in on-demand and reserved instances.
+
+:bulb: Any question asking about special licensing or compliance requirements **think dedicated hosts**.
+
+### Timing Workloads with Spot Instances and Spot Fleets
+
+AWS EC2 Spot instance let you take advantage of unused capacity in the cloud and come at a 90% discount compared on-demand prices. Useful for stateless, fault-tolerant, or flexible applications. Not useful for web servers that need to always be on, persistent workloads, critical jobs or databases. But useful for bid data, containerized worklods, high performance computing (HPC), **CI/CD** and other test and development workloads.
+
+You first decide on a max spot price, the instance will be provisioned as long as the spot price is below the max price defined. Hourly spot price varies on capacity and region. You have 2 minutes when it goes above the max to choose whether to stop or terminate the instance.
+
+**Spot blocks** can be set up to stop termination, so even if it goes above the max you can set blocks for between 1-6 hours.
+
+Spot pricing history can be found in the pricing history.
+
+:bulb: If you have a **persistent spot request** you can't take down instances because the request will see that you have less than the determined spot max and will just keep provisioning instances, you must cancel the requests themselves first. Then you still need to go and terminate the instances.
+
+:bulb: **Spot Fleets** are collections of spot instances and (optionallu) on-demand instances. Spot fleets launch a number of spot insances to meet the target capacity specified in a spot fleet request. The fleet will maintain the target capacity if your spot instances are interrupted.
+
+- :bulb: TL;DR: Spot fleets will try and match the target capacity in your price restraints
+  - Launch pools can be defined for things like EC2 instance type, OS, and AZ and you can define multiple pools.
+  - Spot fleets will stop launching instances once you reach the price threshold or capacity
+
+There are **4 types of Spot Fleet Strategies**:
+
+![Spot Fleet Strategies](img/ec2_spot_fleet_strats.png)
