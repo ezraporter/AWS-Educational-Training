@@ -181,7 +181,8 @@ S3 scales automatically to meet demand, so for static sites you dont have to wor
 
 In this lesson we create a static webpage using a Bucket Policy in JSON (below) and an HTML file (below):
 
-**Bucket Policy**
+**Bucket Policy:**
+
 ```JSON
 {
 	"Version": "2012-10-17",
@@ -201,7 +202,8 @@ In this lesson we create a static webpage using a Bucket Policy in JSON (below) 
 }
 ```
 
-**HTML Content**
+**HTML Content:**
+
 ```HTML
 # index.html
 
@@ -495,7 +497,7 @@ Spot pricing history can be found in the pricing history.
 
 :bulb: If you have a **persistent spot request** you can't take down instances because the request will see that you have less than the determined spot max and will just keep provisioning instances, you must cancel the requests themselves first. Then you still need to go and terminate the instances.
 
-:bulb: **Spot Fleets** are collections of spot instances and (optionallu) on-demand instances. Spot fleets launch a number of spot insances to meet the target capacity specified in a spot fleet request. The fleet will maintain the target capacity if your spot instances are interrupted.
+:bulb: **Spot Fleets** are collections of spot instances and (optionally) on-demand instances. Spot fleets launch a number of spot insances to meet the target capacity specified in a spot fleet request. The fleet will maintain the target capacity if your spot instances are interrupted.
 
 - :bulb: TL;DR: Spot fleets will try and match the target capacity in your price restraints
   - Launch pools can be defined for things like EC2 instance type, OS, and AZ and you can define multiple pools.
@@ -504,3 +506,141 @@ Spot pricing history can be found in the pricing history.
 There are **4 types of Spot Fleet Strategies**:
 
 ![Spot Fleet Strategies](img/ec2_spot_fleet_strats.png)
+
+## Elastic Block Storage (EBS) & Elastic File System (EFS)
+
+### EBS Overview
+
+What are EBS volumes? :bulb:
+
+EBS Volumes will be on the exam in so much as you will be given a scenario and expected to choose the best EBS volume type for that scenario.
+
+EBS volumes are storage volumes you can attach to your EC2 instances. You can use them the same way you would use any system on disk i.e. to create a file system, run a database, run an OS, store data, or install applications. Think of it as a **virtual hard disk in the cloud attached to an EC2 instance.**
+
+EBS are meant for **Mission Critical** use cases i.e. production workloads requiring high availability. They are also very scalable, you can dynamically increase storage with no down time or performance impact.
+
+**EBS Volume Types:**
+
+- **General Purpose SSD (gp2)**
+  - gp2 volumes smaller than 1TB can burst up to 3000 IOPS
+  - Good for boot volumes or dev and test apps that aren't latency sensitive
+- **General Purpose SSD (gp3)**
+  - Similarly balance of price and performance
+  - Ideal for apps requriing high performance at low cost such as MYSQL, cassandra, virtual desktops
+  - gp3 is 4x faster than gp2
+- **Provisioned IOPS SSD (io1)**
+  - High performance option and most expensive
+  - Designed for I/O intensive apps
+- **Provisioned IOPS SSD (io2)**
+  - Same price as io1
+  - For apps that need high levels of durability and latency sensitive workloads
+- **Throughput Optimized HDD (st1)**
+  - low cost HDD volume
+  - Designed for frequently accessed and througput-intensive workloads
+    - Big data, data warehouses, ETL, log processing
+  - Cost effective way to store mountains of data, cannot be a boot volume
+- **Cold HDD (sc1)**
+  - lowest cost option
+  - Good as a file server, for apps that nee the lowest cose and performance is not a factor
+  - Cannot be a boot volume
+
+**IOPS vs Throughput:**
+
+:bulb: Key tips: throughput for big data, data warehouses, etc. IOPS for transactions or GP (GP for cost savings).
+
+![IOPS vs Throughput](/img/ebs_iops_vs_throughput.png)
+
+### Volumes and Snapshots
+
+**What are Volumes?**
+
+Volumes exist on EBS, they are virtual hard disks and there is always a minimum of 1 per EC2 instance.
+
+**What are snapshots?**
+
+Snapshots exist on S3 as essentially a photo of the virtual disk/volume. It is a point in time copy of the volume. They are _incremental_ i.e. only data thats changed from the last snap are moved to S2 to save on space and time to take a snapshot. The entire data set is not moved over, just the changes. So the first snapshot will take longer than all others.
+
+It's recommended that you take consistent snapshots by stopping the instances then snapping. An encrypted volume will result in an encrypted EBS. Snapshots can be shared but **only in the region they were created**, to share them to other regions they must be copied to the destination region first. :bulb:
+
+- EBS Volumes will always be in the same availability zone as your EC2 instance
+- You can resize EBS volumes on the fly without stopping the instance
+- You switch volume types on the fly
+
+### Protecting EBS Volumes with Encryption
+
+EBS enrypts your volume with a data key algorithm where you either manage the key yourself or have AWS manage it for you.
+
+When you create an ecrypted EBS volume the following are encrypted:
+
+- Data at rest inside the volume
+- Data in flight moving between the insance and the volume
+- All snapshots
+- All volumes created from the snapshot
+
+There are 4 steps to encrypt an unencrypted volume:
+
+1) Create a snapshot of the unencrypted root device volume
+2) Create a copy of the snapshot and select the encrypt option
+3) Create an AMI (Amazon Machine Image) from the encrypted snapshot
+4) Use that AMI to launch new encrypted insances
+
+### EC2 Hibernation
+
+When you start an EC2 instance happens:
+
+- OS boots up
+- Bootstrap scripts are run
+- Applications start
+
+EC2 Hibernation tells the OS to suspend to disk. Ibernation saves the contents from RAM into an AWS EBS Volume. When you start an EC2 our of hibernation, the AWS EBS root volume is restored, RAM is reloaded, previously running processes on the instance are resumed, and previously attached volumes are reattached.
+
+The instance boots _much faster_ as a result because you do not need to reload the OS.
+
+Remember:
+
+- Instance RAM must be less than 150 GB
+- Instance families include C3, C4, C6, M3, M4, M5, R5, R4, R5 (C's, M's, R's)
+- You can only hibernate for 60 days max
+
+### EFS Overview
+
+AWS Elastic File System is a network file system capable of being mounted on many EC2 instances. It is essentially share storage that is highly available, scalable, but also expensive.
+
+Great way to share contents across multiple EC2 instances such as for web server farms, etc.
+
+EFS:
+
+- Uses NFSv4 (Network File System) protocl
+- Only compatible with Linux AMIs
+- Encryption at rest using KMS
+- File system scales automatically, no capacity planning required
+- Pay per use
+- Can support thousands of concurrent NFS connections
+- :bulb: Highly scalable storage questions likely refer to EFS
+
+**Storage Tiers:**
+
+- Standard for frequently accessed
+- Infrequently Accessed
+
+### FSx Overview
+
+FSx for Windows is a file server for fully managed Microsoft Windows systems.
+
+Different from EFS because it is designed for Windows Server Message Block (SMB) and Windows apps.
+
+Amazon FSx for Lustre is a fully managed file system for compute-intensive workloads i.e. **AI and Machine Learning**.
+
+:bulb: Exam will ask if you should use EFS, FSx for Windows, or FSx for Lustre. Remember the following:
+
+- EFS for linux instances and linux based apps
+- FSx for Windows for Windows-based apps such as SharePoint, Microsoft SQL Server, etc.
+- FSx for Lustre for AI and ML
+
+### Amazon Machine Images: EBS vs Instance Store
+
+All AMIs (Amazon Machine Images) are categorized as either backed by **EBS** or **Instance Store**.
+
+**Instance Store Volumes** are ephemeral volumes that cannot be stopped. If you delete the instance, you will lose the instance store volume. If you reboot the instance you will lose your data. 
+
+**EBS Volumes** can be stopped, you can back them up.
