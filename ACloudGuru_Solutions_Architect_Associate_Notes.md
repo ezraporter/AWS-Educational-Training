@@ -592,7 +592,7 @@ When you start an EC2 instance happens:
 - Bootstrap scripts are run
 - Applications start
 
-EC2 Hibernation tells the OS to suspend to disk. Ibernation saves the contents from RAM into an AWS EBS Volume. When you start an EC2 our of hibernation, the AWS EBS root volume is restored, RAM is reloaded, previously running processes on the instance are resumed, and previously attached volumes are reattached.
+EC2 Hibernation tells the OS to suspend to disk. Hibernation saves the contents from RAM into an AWS EBS Volume. When you start an EC2 our of hibernation, the AWS EBS root volume is restored, RAM is reloaded, previously running processes on the instance are resumed, and previously attached volumes are reattached.
 
 The instance boots _much faster_ as a result because you do not need to reload the OS.
 
@@ -610,7 +610,7 @@ Great way to share contents across multiple EC2 instances such as for web server
 
 EFS:
 
-- Uses NFSv4 (Network File System) protocl
+- Uses NFSv4 (Network File System) protocol
 - Only compatible with Linux AMIs
 - Encryption at rest using KMS
 - File system scales automatically, no capacity planning required
@@ -644,3 +644,105 @@ All AMIs (Amazon Machine Images) are categorized as either backed by **EBS** or 
 **Instance Store Volumes** are ephemeral volumes that cannot be stopped. If you delete the instance, you will lose the instance store volume. If you reboot the instance you will lose your data. 
 
 **EBS Volumes** can be stopped, you can back them up.
+
+### AWS Backup
+
+Means of backing up AWS services including EC2, EBS, EFS, and more like RDS and Dynamo DB. Can be used with Organizations.
+
+Benefits:
+
+- Central Management via **Consolidation**
+- Automation
+- Improved Compliance
+
+### EBS Exam Tips
+
+![EBS Storage Options](img/ebs_storage_options.png)
+
+## Databases
+
+### Relational Database Service (RDS) Overview
+
+- RDS can be up and running in minutes with automatic backups and multi-AZ with failover insurance
+  - When failover happens a connection string is used and pointed to another AZ, Amazon automatically manages this behind the scenes via DNS
+- RDS is generally used for online transaction processing (**OLTP**) versus online analytical processing (**OLAP**)
+  - RDS is _not_ suitable for analyzing large amounts of data, instead use warehousing a la RedShift
+
+### Increasing Read Performance with Read Replicas
+
+Read replicas are a read-only copy of your primary database so querying does not put additional load on the main database. Multi-AZ is for **disaster recovery only** while read replicas are for **performance improvement**. Read replicas require automatic backups.
+
+Read replicas can also be promoted to become their own primary databases (this breaks the replication).
+
+:bulb: In the exam, questions related to performance or scaling issues can be solved by adding a read replica.
+
+### What is Amazon Aurora?
+
+MySQL and PostgreSQL compatiable RDS from Amazon. 5x better performance than MySQL and 3x better than PostgreSQL.
+
+- Starts 10Gb in size and scales in 10Gb increments up to 128Tb (storage auto scaling)
+- Compute resources can scale up to 96 vCPUs and 768 Gb of memory
+- 2 copies of your data are contained in each AZ with a min of 3 AZs (always have 6 data copies)
+- Aurora is self-healing
+- Automated backups are always enabled. This and snapshots do not impact performance
+
+
+Amazon Aurora Serverless is a cluster that automatically starts up, shits down, and scales capacity based on app needs. Only paying for it when you use it. :bulb: Useful to save cost when working with unpredicatble, "spiky" workloads.
+
+### DynamoDB Overview
+
+DynamoDB is Amazon's solution for NoSQL databases, think key-value data models.
+
+DynamoDB Accelerator (DAX):
+
+- Fully managed, available, in-memory cache (devs dont need to manage cacheing logic)
+- 10x permance improvement
+- Reduces request time
+
+Traditional caches stores data and when an application looks to the cache, if the data isnt there, it then goes to the DynamoDB and then the result is cached. With DAX the app goes directly to the DAX and if DAX does not have the cached data, DAX will go to DynamoDB. The app itself only ever goes to DAX and doesn't have to manage where it looks.
+
+:bulb: **Exam Tips:**
+
+- All stored on SSD
+- Spread across 3 geographically different data centers
+- **Eventually consistent** reads (default)
+  - Copies all data reached within 1 second
+- **Strongly consistent** reads
+  - Returns result reflecting all writes
+
+### When do we use DynamoDB Transactions?
+
+What is ACID? :bulb:
+
+![ACID Diagram](/img/dynamodb_acid.png)
+
+:bulb: If you get a scenario based question related to having ACID methodology with DynamoDB think: You want to enable DynamoDB Transactions. ACID basically means **all or nothing**.
+
+Use Cases:
+
+- Processing financial transactions
+- Fulfilling and managing orders
+- Building multiplayer game engines
+- Coordinating actions across distributed components and services
+
+### Saving Your Data with DynamoDB Backups
+
+DynamoDB has full **on-demand backup and restore**. Full backups are obtained at any time with zero impact on table performance or availability and are retained until deleted. They operate in the same region as the source table.
+
+**Point in Time Recovery (PITR)** protects against accidental writes and deletes and allows restoration in the last 35 days at any point. Not enabled by default, must be turned on.
+
+### Taking your Data Global with DynamoDB Streams and Global Tables
+
+**DynamoDB Streams:**
+
+- Time ordered sequence of item level changes in a table
+- Data are broken up into shards, stored sequentially for 24 hours. Changes are inserts, updates, and deletes.
+
+**Global Tables:**
+
+- Managed multi-master, multi-region replication
+- Multi-region redundancy for disaster recovery and high availability
+- No application re-writes
+- Best for Globally distributed applications
+- Replication latency under 1 second
+- :bulb: Global Tables _require Streams to be enabled_
