@@ -746,3 +746,117 @@ DynamoDB has full **on-demand backup and restore**. Full backups are obtained at
 - Best for Globally distributed applications
 - Replication latency under 1 second
 - :bulb: Global Tables _require Streams to be enabled_
+
+### Other Notes
+
+- RDS lives in your VPC, DynamoDB **does not**
+
+## Virtual Private Cloud (VPC) Networking
+
+### VPC Overview
+
+A VPC is a virtual data center in the cloud. It is a logically isolated part of the AWS cloud and a fully customizable network.
+
+**VPC Network Diagram**:
+![VPC Network Diagram](img/vpc_network_diagram.png)
+
+With a VPC you can:
+
+- Launch instances
+- Create custom IP Addresses
+- Route tables between subnets
+- Create an internet gateway
+- Control security over resources
+- Access subnet control lists
+
+:bulb: Popular exam question: Do you use security groups to block IP access or Network Access Control Lists (NACLs)? The answer is **NACL**s.
+
+**Default VPC vs. Custom VPC:**
+
+Default VPCs are:
+
+- User friendly
+- All submets have a route out to the internet
+- Each EC2 instance has a private and public IP address
+
+Custom VPCs:
+
+- Fully customizable
+- Take time to set up
+
+:bulb: **One subnet is always available in 1 AZ.**
+
+IPv4 CIDR blocks must be bewtween /16 and /28 netmask block sizes. The example in these lectures is **10.0.0.0/16** :bulb:
+
+Note that when creating a VPC subnet, the first 5 IP addresses in each subnet CIDR block are reserved by AWS:
+
+- 10.0.0.0 <- Network Address
+- 10.0.0.1, 10.0.0.2, 10.0.0.3, 10.0.0.225
+
+You can only have **one internet gateway per VPC** :bulb:, so any questions about increasing internet throughput are trick questions and an internet gateway cannot solve this this way.
+
+You always want to make a new route table to route out to the internet.
+
+Security groups do not span VPCs, any you create in the default VPC will need to be recreated.
+
+### Using NAT Gateways for Internet Access
+
+What is a **NAT Gateway**? Network Address Translation gateways enable instances in a private subnet to connect to the internet or other AWS services while preventing the internet from initiating a connection with those instances.
+
+5 facts to remember about NAT Gateways:
+
+1) Redundant inside the AZ
+2) Starts at 5Gbs and scales to 45Gbps
+3) No need to patch, AWS handles this automatically
+4) Not associated with security groups
+5) Auto-assigns public IP addresses
+
+NAT Gateways for setup can be found under the VPC section on the management console. Takes approx 5-10 minutes to set up.
+
+### Protecting your Resources with Security Groups
+
+Know the difference between Security Groups and NACLs. Know that security groups are **stateful** i.e. if you send a request from your instance, the repsonse traffic for that request is allowed to flow regardless of inbound rules. NACLs are **stateless**. :bulb:
+
+### Controlling Subnet Traffic with Network ACLs
+
+What is a **Network ACL**?
+
+First line of defense. An optional layer of security for the VPC that acts as a firewall for traffic control in and out of one or more subnets.
+
+If you look back at the network diagram, you'll see that the NACL exists between the route table and security group, so traffic hits the NACL before it gets to the security group.
+
+- Default NACLs in your VPC come with default allowance of all outbound and inbound traffic
+  - You can create custom NACLs, and by default each custom NACL denies both traffic flows until specified otherwise
+  - **NACLs can block IP Addresses, security groups cant** :bulb:
+- A subnet can be associated with only 1 NACL at a time, once associated any previous associations are removed
+- NACLs are **stateless:** responses to allowed inbound traffic are subject to the rules for outbound traffic (and vice versa)
+
+### Private Communication Using VPC Endpoints
+
+What are VPC Endpoints? Enable private connection of VPC to AWS services and VPC endpoint services via PrivateLink and without requiring internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Kind of like a NAT Gateway but instead of external internet, it stays _inside_ the AWS environment.
+
+> Think of a VPC endpoint like a NAT gateway where traffic goes between VPC and other services but does not leave the AWS network.
+
+Endpoints are _virtual devices_ that are horizontally scalewd, redundant, highly available VPC components allowing comms between instances in the VPC and services.
+
+There are **2 types of endpoints:**
+
+![VPC Endpoints](/img/vpc_endpoints.png)
+
+### Network Privacy with AWS PrivateLink
+
+You can open your services in a VPC to another VPC either by opening to the internet (public access) or by using **VPC Peering**.
+
+The best way to expose a VPC to customer VPCs is using PrivateLink. Doesn't require VPC peering, route tables, NAT gateways, internet gateways, etc. Requires a Netowrk Load Balancer on the VPC and (Elastic Network Interface) ENI on the customer VPC.
+
+:bulb: Questions related to peering VPCs to customer VPCs, think **PrivateLink**.
+
+### Building Solutions across VPCs with Peering
+
+Occassionally you need multiple VPCs and they may need connection to each other.
+
+VPC Peerign allows for one VPC to connect to another using a private IP address. Instances behave as if they were on the same private network. You can also peer between regions.
+
+VPC peering is **transitive peering**, i.e. if VPC A is connected to B and C, B and C can't connect to each other through A. A separate peering link must be established between B and C.
+
+**You cannot have overlapping CIDR address ranges when peering VPCs.**
