@@ -641,7 +641,7 @@ Amazon FSx for Lustre is a fully managed file system for compute-intensive workl
 
 All AMIs (Amazon Machine Images) are categorized as either backed by **EBS** or **Instance Store**.
 
-**Instance Store Volumes** are ephemeral volumes that cannot be stopped. If you delete the instance, you will lose the instance store volume. If you reboot the instance you will lose your data. 
+**Instance Store Volumes** are ephemeral volumes that cannot be stopped. If you delete the instance, you will lose the instance store volume. If you reboot the instance you will lose your data.
 
 **EBS Volumes** can be stopped, you can back them up.
 
@@ -685,7 +685,6 @@ MySQL and PostgreSQL compatiable RDS from Amazon. 5x better performance than MyS
 - 2 copies of your data are contained in each AZ with a min of 3 AZs (always have 6 data copies)
 - Aurora is self-healing
 - Automated backups are always enabled. This and snapshots do not impact performance
-
 
 Amazon Aurora Serverless is a cluster that automatically starts up, shits down, and scales capacity based on app needs. Only paying for it when you use it. :bulb: Useful to save cost when working with unpredicatble, "spiky" workloads.
 
@@ -860,3 +859,179 @@ VPC Peerign allows for one VPC to connect to another using a private IP address.
 VPC peering is **transitive peering**, i.e. if VPC A is connected to B and C, B and C can't connect to each other through A. A separate peering link must be established between B and C.
 
 **You cannot have overlapping CIDR address ranges when peering VPCs.**
+
+### Securing Your Network with VPN CloudHub
+
+VPN CloudHub is low cost, easy to manage, and works on a hub-and-spoke model (Similar to VPC peering) allowing for multiple sites with individual VPN connections to connect those sites together.
+
+:bulb: Scenario based questions asking about VPN connection aggregation, think **VPN CloudHub**.
+
+### Connecting On-Premises with Direct Connect
+
+AWS Direct Connect makes it easy to **establish a dedicated network connection from your premises AWS.**
+
+2 types of Direct Connect options:
+
+1) **Dedicated Connection**: A physical ethernet connection, requested through the console, CLI, or API.
+2) **Hosted Connection**: Physical ethernet connection, provided by a Direct Connect partner like Verizon, AT&T, etc.
+
+Direct Connect is much faster than VPN. :bulb: Scenario questions could be about how to increase network speed and decrease costs for VPN.
+
+### Simplifying Networks with Transit Gateway
+
+Transit Gateway connects VPCs and on-premises networks through a central hub to simplify complex VPC peering relationships.
+
+The VPCs connect to Transit Gateway once and allows everything connected to Transit Gateway to talk to each other. Another hub-and-spoke model.
+
+Transit Gateway work with Direct Connect as well as VPN and is the only thing that allows IP multicast.
+
+Anything talking about connection topology simplication is related to Transit Gateway :bulb:
+
+### VPN Networking Exam Tips
+
+- 1 subnet is always in 1 AZ, subnets cant span multiple AZs
+- the default iPv4 CIDR address for a VPC provided by AWS is 172.31.0.0/16
+- NACLs are _stateless_
+- NACLs are available at the _subnet level_
+- VPCs can fail if they have overlapping IP addresses, but they can be accessed cross-accounts
+- Security Groups are _stateful_
+
+## Route 53
+
+### Route 53 Overview
+
+What is DNS? Converts human-friendly domain names into IP addresses.
+
+IP addresses come in two forms: IPv4 and IPv6.
+
+IPv4 addresses are running out now that the internet is wide spread. IPv6 was made to address this and has much greater capacity.
+
+Top-Level Domains are the last word in the domain name (.com, .uk, .guru). The second word is known as the second-level domain name. (google.com) Top-Level Domains are controlled by the **Internet Assigned Numbers Authority (IANA)**.
+
+**Domain Registrars** are authorities that can assign domains directly under one or more top-level domains, this ensures domain names are unique and not duplicated.
+
+**Common DNS Record Types:**
+
+**SOA (Start of Authority)** - name of the server, administrator, current version number, default number of seconds for time-to-live file on resource records. **NS (Name Server)** records are used by top-level domain servers to direct traffic to the content DNS server that contains the SOA DNS records.
+
+What is an **A Record**? An **address** record. Example: _http://www.acloud.guru_ points to _http://123.10.10.80_
+
+What is a **Time to Live (TTL)**? The length that a DNS record is cached on the resolvign server or a users own PC (in seconds). The lower the TTL, the faster changes to DNS records take to propagate throughout the internet.
+
+A **CNAME (canonical name)** can be used for resolving one domain from another, example: the mobile version of *http://acloud.guru* could be *http://m.acloud.guru*.
+
+**Alias Records** helps to map AWS resources together, its basically a CNAME for AWS.
+
+There are **7 Routing Policies** for Route 53:
+
+1) Simple Routing
+2) Weighted Routing
+3) Latency-Based Routing
+4) Failover Routing
+5) Geolocation Routing
+6) Geoproximity Routing (Traffic Flow Only)
+7) Multivalue Answer Routing
+
+### Register a Domain Name
+
+> Review video lecture, mostly a demo
+
+### Simple Routing Policy
+
+Allows for one record with multiple IP adresses. If you specify multiple values in a record, Route 53 returns all values to the user in a random order.
+
+In the demo the record instance was assigned two IPs and when viewing the URL it would sometimes route to one or the other IP randomly.
+
+### Failover Routing Policy
+
+The failover routing policy is used for an **active/passive** setup, for example: Route 53 will monitor your site using a health check and then "failover" to a secondary DR site if the primary one doesn't pass.
+
+### Geolocation Routing Policy
+
+Lets you choose where traffic will be sent based on the end location of your end users. I.e. all Europe queries to be routed to a fleet of EC2 instances specifically configured for European customers (may have local languages, prices in eurors, etc.).
+
+Ex: All EU customers get directed to eu-west-1, all US customers get directed to us-east-1.
+
+### Geoproximity Routing Policy
+
+Route 53 Traffic Flow can be used to build a routing system using geographic location, latency, and availability to route traffic from users to cloud or on-prem endpoints. Only available when using Traffic Flow. Geoproxmity routing lets you route traffic to your resources based on the location of users and resources. You can also set a **bias** which allows you to dictate where you want the majority of your traffic to go.
+
+> Likely wont see much in exam, very complex.
+
+### Latency Routing Policy
+
+Allows you to route traffic based on lowest netowrk latency for the end user (fastest response time). Set a latency reosurce record for the EC2 resource in each region that hosts your site. Route 53 then selects the latency resources record set for the reguon with the lowest latency.
+
+### Multivalue Answer Routing Policy
+
+Basically Simple Routing with Health Checks.
+
+### Weighted Routing Policy
+
+Allows you to split traffic based on different assigned weights: send 10% to us-east-1 and 90% to eu-west-1. You can also set health checks on individual record sets. Note that the percentage split is based on values 0-255, but you can still say weights of 30 and 70 because it will base the weights on the total.
+
+## Elastic Load Balancing (ELB)
+
+### ELB Overview
+
+What are ELBs? They auto distribute incoming app traffic across multiple targets like EC2, can be done across multiple AZs. _Balances the load of your servers_.
+
+There are **3 types of load balancers**:
+
+1) **Application Load Balancer**: Intelligent balancer, best suited for HTTP and HTTPS traffic. Operate at Layer 7 and are application-aware.
+2) **Network Load Balancer**: Performance balancer, operates at the connection level (Layer 4). Ultra low latency while handling lots of requests.
+3) **Classic Load Balancer**: Test/Dev balancer, use Layer 7 features, balance HTTP/HTTPS traffic.
+
+All ELBs can be configured with **health checks**. Load balancers only route requests to healthy instances.
+
+### Using Application Load Balancers
+
+AApp Load balancers operate at the Application layer - the **seventh layer of the Open Systems Interconnection (OSI) model**. After the load balancer recieves a request, it evaluates listener rules in priority order to determine which rule to apply, then selects a target from the target group for the rule action.
+
+**_Listeners_** check for connection requests from clients using the protocl and port you configure (80, 443, etc).
+
+Each **rule** consists of a priority, one or more actions, and one or more conditions. When the conditions for a rule are met, then its actions are performed.
+
+_**Target groups**_ route requests to oen or more registered targets like EC2 instances.
+
+:bulb: Common exam scenario: **Path-Based routing** patterns can help with navigating users between different availability zones per the URL used.
+
+![ELB Path Based Routing](img/elb_path_based_routing.png)
+
+Application load balancers **only support HTTP and HTTPS**. To use HTTPS you must deploy at least oneSSL/TLS server certificate on the ELB.
+
+### Extreme Performance with Network Load Balancers
+
+Layer 4 load balancing is where Netowrk ELBs function (at the connection level), and can handle millions of requests per second.
+
+**Request Received:** after a load balancer recieves a request it selects a target from the target group for the default rule and attempts to open a TCP connection on the port specified in the **listener** config.
+
+The listener forward the request to the target group. Unlike application load balancers, there are **no rules**.
+
+**Target groups** route the requests to one or more registered targets such as EC2 instances.
+
+Network Load Balancers can dencrypt traffic but you will need to install a certificate on the load balancer.
+
+### Using the Classic Load Balancer
+
+The legacy load balancer that can be used with HTTP/HTTPS apps and use Layer 7 specific features such as **X-forwarded** and stick sessions. You can also use strict layer 4 balancing for apps relying purely on the TCP protocol.
+
+**X-Forwarded-For** request headers are used to see the original IP address of the client. :bulb: Remember that if you an external IP address you will need the header. If you need the IPv4 address of your end user, look for the X-Forwaded_For header :bulb
+
+504 errors mean that the gateway has timed out, meaning the application is not responding within the idle timeout period. :bulb:
+
+### Getting "Stuck" with Stick Sessions
+
+Classic Load Balancers route each request independetly to the registered EC2 insance with the smallest load.
+
+**Stick sessions allow you to bind a user's session to a specific EC2 instance.**
+
+**This can cause problems when the EC2 instance is terminated, solved by disabling sticky sessions. **They can be useful for storing information locally to an instance.
+
+### Leaving the Load Balancer with Degregistration Delay
+
+(Called "Connection Draining" with Classicl ELBs)
+
+What is it? Allows Load balancers to keep existing connectiosn open if the EC2 instances are deregistered or unhealthy, enabling load balancers to complete in-flight requests made to registers in the process of de-registering or unhealthy.
+
+:bulb: Remember to enable deregistration delays to keep connections open if an EC2 becomes unhealthy. Disable if you want to immediately close connections.
