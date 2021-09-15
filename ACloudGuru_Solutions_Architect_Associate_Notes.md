@@ -185,20 +185,20 @@ In this lesson we create a static webpage using a Bucket Policy in JSON (below) 
 
 ```JSON
 {
-	"Version": "2012-10-17",
-	"Statement": [
-		{
-			"Sid": "PublicReadGetObject",
-			"Effect": "Allow",
-			"Principal": "*",
-			"Action": [
-				"s3:GetObject"
-			],
-			"Resource": [
-				"arn:aws:s3:::BUCKET_NAME/*"
-			]
-		}
-	]
+ "Version": "2012-10-17",
+ "Statement": [
+  {
+   "Sid": "PublicReadGetObject",
+   "Effect": "Allow",
+   "Principal": "*",
+   "Action": [
+    "s3:GetObject"
+   ],
+   "Resource": [
+    "arn:aws:s3:::BUCKET_NAME/*"
+   ]
+  }
+ ]
 }
 ```
 
@@ -208,29 +208,29 @@ In this lesson we create a static webpage using a Bucket Policy in JSON (below) 
 # index.html
 
 <html>
-	<title>
-		<head>Hello Cloud Gurus</head>
-	</title>
-	<body>
-		<div align="center">
-			<h1>Hello Cloud Gurus!</h1>
-			<img src="https://s3.amazonaws.com/acloudguruimages/ACG.jpg">
-		</div>
-	</body>
+ <title>
+  <head>Hello Cloud Gurus</head>
+ </title>
+ <body>
+  <div align="center">
+   <h1>Hello Cloud Gurus!</h1>
+   <img src="https://s3.amazonaws.com/acloudguruimages/ACG.jpg">
+  </div>
+ </body>
 </html>
 
 # error.html
 
 <html>
-	<title>
-		<head>Error Cloud Gurus</head>
-	</title>
-	<body>
-		<div align="center">
-			<h1>Sorry Cloud Gurus, there has been an error!</h1>
-			<img src="https://s3.amazonaws.com/acloudguruimages/acg2.png">
-		</div>
-	</body>
+ <title>
+  <head>Error Cloud Gurus</head>
+ </title>
+ <body>
+  <div align="center">
+   <h1>Sorry Cloud Gurus, there has been an error!</h1>
+   <img src="https://s3.amazonaws.com/acloudguruimages/acg2.png">
+  </div>
+ </body>
 </html>
 ```
 
@@ -914,11 +914,11 @@ Top-Level Domains are the last word in the domain name (.com, .uk, .guru). The s
 
 **SOA (Start of Authority)** - name of the server, administrator, current version number, default number of seconds for time-to-live file on resource records. **NS (Name Server)** records are used by top-level domain servers to direct traffic to the content DNS server that contains the SOA DNS records.
 
-What is an **A Record**? An **address** record. Example: _http://www.acloud.guru_ points to _http://123.10.10.80_
+What is an **A Record**? An **address** record. Example: <http://www.acloud.guru> points to <http://123.10.10.80>
 
 What is a **Time to Live (TTL)**? The length that a DNS record is cached on the resolvign server or a users own PC (in seconds). The lower the TTL, the faster changes to DNS records take to propagate throughout the internet.
 
-A **CNAME (canonical name)** can be used for resolving one domain from another, example: the mobile version of *http://acloud.guru* could be *http://m.acloud.guru*.
+A **CNAME (canonical name)** can be used for resolving one domain from another, example: the mobile version of <http://acloud.guru> could be <http://m.acloud.guru>.
 
 **Alias Records** helps to map AWS resources together, its basically a CNAME for AWS.
 
@@ -1020,18 +1020,68 @@ The legacy load balancer that can be used with HTTP/HTTPS apps and use Layer 7 s
 
 504 errors mean that the gateway has timed out, meaning the application is not responding within the idle timeout period. :bulb:
 
-### Getting "Stuck" with Stick Sessions
+### Getting "Stuck" with Sticky Sessions
 
 Classic Load Balancers route each request independetly to the registered EC2 insance with the smallest load.
 
-**Stick sessions allow you to bind a user's session to a specific EC2 instance.**
+**Sticky sessions allow you to bind a user's session to a specific EC2 instance.**
 
-**This can cause problems when the EC2 instance is terminated, solved by disabling sticky sessions. **They can be useful for storing information locally to an instance.
+**This can cause problems when the EC2 instance is terminated, solved by disabling sticky sessions.** They can be useful for storing information locally to an instance.
 
 ### Leaving the Load Balancer with Degregistration Delay
 
-(Called "Connection Draining" with Classicl ELBs)
+(Called "Connection Draining" with Classic ELBs)
 
 What is it? Allows Load balancers to keep existing connectiosn open if the EC2 instances are deregistered or unhealthy, enabling load balancers to complete in-flight requests made to registers in the process of de-registering or unhealthy.
 
 :bulb: Remember to enable deregistration delays to keep connections open if an EC2 becomes unhealthy. Disable if you want to immediately close connections.
+
+## Monitoring
+
+### Cloudwatch Overview
+
+**CloudWatch** is a monitoring and observability platform inside of the AWS archtecture.
+
+Features:
+
+- System metric collection. Example: CPU performance, RDS logs
+- Application metric collection. Example: EC2 instance logs, application performance
+- Alarms. Alerts to when something goes wrong.
+
+There are two kinds of metrics:
+
+1) **Default**: Provided out of the box with no additional config needed
+2) **Custom**: Need to be provided by using CloudWatch agent installed on the host
+
+![CloudWatch Metrics](/img/cloudwatch_metrics.png)
+
+:bulb: It's important to have a sense of what default metrics are available when making alarms.
+
+:bulb: It is possible to make alarms for EC2 that send e-mails as well as trigger EC2 actions like stopping, starting, or terminating instances.
+
+### Application Monitoring with CloudWatch Logs
+
+CloudWatch Logs exists in CloudWatch's suite and is a tool allowing you to monitor, store, and access log files from various sources, giving you the ability to query for issues.
+
+**3 Cloudwatch Logs Terms:**
+
+1) **Log Event:** A datapoint with a time stamp, a record of what happened.
+2) **Log Stream:** A collection of log events from the same source. Logs from one single instance.
+3) **Log Group:** A collection of log streams. Ex: Group all Apache web server logs across hosts together.
+
+**CloudWatch Logs Features:**
+
+- Filter Patterns: Look for specific terms in your logs such as "404 errors" within the web server logs
+- CloudWatch Logs Insights: SQL-like commands to query all logs
+- Alarms: Once trends are identified, set up alarms for alerting you
+
+**Notes:**
+
+- Except for situations where we don't need to process them, logs can go to S3 otherwise they should go to CloudWatch Logs.
+- CloudWatch Logs is your go to tool unless the exam asks for a _real-time_ solution
+- CloudWatch Logs is agent based, it is not automatically installed or configured
+- Anything CloudWatch/Logs and SQL focused requires _Insights_
+
+### Monitoring Exam Tips
+
+- real time CloudWatch Logs is handled by **Kinesis**
