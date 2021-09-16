@@ -1085,3 +1085,82 @@ CloudWatch Logs exists in CloudWatch's suite and is a tool allowing you to monit
 ### Monitoring Exam Tips
 
 - real time CloudWatch Logs is handled by **Kinesis**
+
+## High Availability and Scaling
+
+### Horizontal vs Vertical Scaling Overview
+
+Vertical Scaling is analgous to scaling up a single EC2 instance size, but this will have a limit.
+
+Horizontal Scaling spreads out EC2 instances into a collection. This increases high availbility thanks to redundancy.
+
+:bulb: **The 3 W's of scaling:**
+
+- What do we scale? i.e. what resource and how do we define a template?
+- Where do we scale? Should we scale out a database? Webservers?
+- When do we scale? How do we know when we need more? (CloudWatch alarms can tell us!)
+
+### What are Launch Templates and Launch Configurations?
+
+> WHAT are we scaling?
+
+A **launch template** is a collection of settings for building an EC2 instance.
+
+![Launch Templates](/img/launch_templates.png)
+
+TL;DR - Templates are 99% of the time better than configurations!
+
+:bulb: For the exam, remember what goes into a launch template. It includes:
+
+- AMI
+- Instance Size
+- Security groups
+- Potentially networking info
+  - *If it includes networking info it can't be included in the auto scaling group, just in itself
+
+**User data** is also included in the template, but requires versioning out of the template and then include the adjusted user data. Templates can always be versioned and are immutable. They cannot be edited one they are created.
+
+### Scaling EC2 Instances with Auto Scaling
+
+> WHERE are we going to scale?
+
+**Auto scaling groups** are collections of instances treated as a collective group for scaling and management.
+
+1) Define your template
+2) Networking and Purchasing
+   1) Using multiple AZs allows for high availability
+3) ELB Configuration
+   1) EC2 instances are registered and deregstired behind the load balancer, the auto scaling group can also be set to respect the load balancer health checks
+4) Set Scaling Policies
+   1) Define min, max and desired capacity i.e. resources/instances
+5) Notifications
+   1) Set SNS (simple notification service) to notify when a scaling event occurs
+
+**Auto Scaling Restrictions:**
+
+- **Minimum** number of EC2 instances you'll ever have online
+  - Typically you want to have at minimum two instances to ensure high-availability
+- **Maximum** number you'll ever want to provison (high cost)
+- **Desired** capacity, i.e. how many instances do you want at this very moment? Must be between min and max
+
+:bulb: Spot instances can be used in auto scaling groups to save money.
+
+:bulb: Load balancers can be attached, and health checks can be enabled, if desired.
+
+### Diving Deeper into Auto Scaling Policies
+
+> WHEN do we scale?
+
+Note that when instances are being brought online, which can take time, there is a warm up period. So if policies are set requiring 10 new instances but 5 are still launching, a call for only 5 more will be made and not an additional 5 resulting in 5 needless ones requiring termination when all are online.
+
+Cool down periods have a default of 5 minutes. This prevents runaway scaling events, keep auto scaling events _gradual_.
+
+Warm up and cool down together help to avoid _thrashing_.
+
+**Scaling Types:**
+
+1) Reactive Scaling
+2) Scheduled Scaling
+3) Predictive Scaling
+
+:bulb: "Steady State Auto Scaling Groups" are configured by setting min/max/desired all to 1, this is good for legacy code basis that you dont want copied but you do want highly available.
