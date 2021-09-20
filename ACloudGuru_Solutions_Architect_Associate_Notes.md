@@ -916,7 +916,7 @@ Top-Level Domains are the last word in the domain name (.com, .uk, .guru). The s
 
 What is an **A Record**? An **address** record. Example: <http://www.acloud.guru> points to <http://123.10.10.80>
 
-What is a **Time to Live (TTL)**? The length that a DNS record is cached on the resolvign server or a users own PC (in seconds). The lower the TTL, the faster changes to DNS records take to propagate throughout the internet.
+What is a **Time to Live (TTL)**? The length that a DNS record is cached on the resolving server or a users own PC (in seconds). The lower the TTL, the faster changes to DNS records take to propagate throughout the internet.
 
 A **CNAME (canonical name)** can be used for resolving one domain from another, example: the mobile version of <http://acloud.guru> could be <http://m.acloud.guru>.
 
@@ -1164,3 +1164,87 @@ Warm up and cool down together help to avoid _thrashing_.
 3) Predictive Scaling
 
 :bulb: "Steady State Auto Scaling Groups" are configured by setting min/max/desired all to 1, this is good for legacy code basis that you dont want copied but you do want highly available.
+
+### Scaling Relational Databases
+
+4 Ways to Scale:
+
+1) **Vertical Scaling**: Resizing database from one size to another to create greater performance
+2) **Scaling Storage**: Storage can be resized (but only up, not down...except Aurora)
+3) **Read Replicas**: Creating read-only copies can help spread the workload
+   1) Exam Tip:bulb: : Any time you see read-heavy workloads and RDS, think **Read Replicas**
+4) **Aurora Serverless**: Offload scaling to AWS, excels with unpredictable workloads
+
+**Exam Tips:**
+
+- You will be given scenarios and, unless otherwise specified, refactoring and changing to DyanmoDB is a viable scaling choice. It's not good in the real world, but it's viable in the exam.
+- Read-replicas are your friend for any read-heavy workloads. They will need their endpoints updated.
+- RDS storage only scales up, not down.
+- Unless in a dev environment, always have multi-AZ turned on.
+- Whenever possible, pick Aurora.
+
+### Scaling Non-Relational Databases (DynamoDB)
+
+2 types of DynamoDB models:
+
+- **Provisioned**: Generally predictable workload, most cost effective
+- **On-Demand**: Sporadic workload, pasy small amount of money _per_ read and write. Less cost effective
+
+> You can switch between the two types of models, but only once per 24 hours.
+
+:bulb: Know access patterns, if predictable -> provisioned.
+
+### High Availability & Scaling Exam Tips
+
+**4 Questions to ask in the exam:**
+
+1) Is it highly available?
+2) Which is appropriate: horizontal or vertical? (Generally favor horizontal unless an instance needs more power)
+3) Is it cost effective?
+4) Would switching the databases fix the problem?
+
+:bulb: Auto Scaling is only for EC2 instances. Other services can scale, but aren't included in _auto-scaling groups_.
+
+:bulb: Get ahead of the workload, always pick the predictive than the reactive
+
+:bulb: Bake AMI's to reduce build times. You can avoid long provisoning times by putting everything in an AMI. Better than using user data whenever possible.
+
+:bulb: Spread out across multiple AZs, at least 2, for high availbility.
+
+:bulb: Steady state groups allow for failover recovery of legacy codebases or resources.
+
+:bulb: ELBs are essential. Make sure you enable health checks which are _not_ auto enabled.
+
+## Decoupling Workflows
+
+### Decoupling Workflows Overview
+
+Tight Coupling vs. Loose Coupling
+
+Tight coupling means theres one instance talking directly to another single instance, never tightly couple applications.
+
+Loose coupling is achieved by applying ELBs, the user is load balanced to multiple frontend EC2s which are in turn are ELB'd to multiple backend EC2s.
+
+> Loose coupling is almost always better than tight coupling. You almost never want single EC2 instances talking to each other.
+
+3 Services can help with this:
+
+- **Simple Queue Service (SQS)**: a fully managed message queuing service enabling you to decouple and scale microservices, distributed systems, and serverless apps
+- **Simple Notification Service (SNS)**: A fully managed messaging service for both application-to-application (A2A) and application-to-person (A2P) comms
+- **API Gateway**: Allows a safe, scaleable, highly available front door for developers.
+
+### Messaging with SQS
+
+What is Poll-Based Messaging?
+
+Very similar to mail delivery. Messaging queue that allows for _asynchronous_ processing of work. One resrouce will write a message to an SQS queue and then another will retrieve that message from SQS when it's ready (like retrieving mail from a mailbox).
+
+**SQS Settings:**
+
+1) Delivery Delay: Default is 0 but can be up to 15 minutes
+2) Message Size: Up to 256KB of text in _any_format
+3) Encryption: Messages are encrypted by default in transit, but you can add at-rest
+4) Messaging Retention: Default is only 4 days, can be between 1 minute and 14 days before they get purged
+5) Long vs. Short polling: Short is default, backend connects to look for work and if non is available it disconnects. This means lots of API calls that are not free. Long polling can help save money since the connection waits.
+6) Queue Depth: Can be a trigger for autoscaling
+7) **Visibility Timeout**: Ensures proper handling of messages in the SQS queue. A lock is placed on the message (default is 30 seconds), where message remains in the queue but other instances can't see it. **Big exam topic :bulb:**
