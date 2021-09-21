@@ -1248,3 +1248,14 @@ Very similar to mail delivery. Messaging queue that allows for _asynchronous_ pr
 5) Long vs. Short polling: Short is default, backend connects to look for work and if non is available it disconnects. This means lots of API calls that are not free. Long polling can help save money since the connection waits.
 6) Queue Depth: Can be a trigger for autoscaling
 7) **Visibility Timeout**: Ensures proper handling of messages in the SQS queue. A lock is placed on the message (default is 30 seconds), where message remains in the queue but other instances can't see it. **Big exam topic :bulb:**
+
+### Sidelining Messages with Dead-Letter Queues
+
+> **Scenario**: If a message popped up and failed to be processed correctly (i.e. a user placed in the wrong information), the message would continue popping up as the Visibility Timeout expires until the maximum retention window (14 days) was met and then it would be terminated forever.
+
+Dead Letter Queues solve this, allowing you side-line problematic messages after a number of specified retries is hit.
+
+![Dead-Letter Queue](/img/sqs_dead-letter_queue.png)
+
+Dead-Letter Queue's need to be created before Primary Queues. All you have to do is set "enabled" and then select the AWS ARN for the the newly created queue. You also set the "Maximum Recieves" allowing the number of tries the primary queue makes before sidelining the message.
+
