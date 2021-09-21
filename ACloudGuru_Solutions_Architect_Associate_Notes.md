@@ -1301,3 +1301,30 @@ A proper Access policy (permissions) must be set up properly to allow for the SN
 :bulb: "Where does it go?" You will need to know all the subscriber options. **Don't pick SES, SES is better for marketing emails.**
 
 :bulb: SNS will only retry endpoints once
+
+### Fronting Applications with API Gateway
+
+API Gateway is a fully managed safe front door for your applications. Restrictions are placed here.
+
+Features to Know:
+
+- Security: allows you to easily protect endpoints by attaching a web application firewall (WAF)
+- Stop Abuse: easily set up DDoS protection and rate limiting to curb abuse
+- Ease of Use: simple to get started with, easily build out calls to kick off other AWS services in your account
+
+:bulb: API calls to your application and AWS environment are for API Gateway.
+
+:bulb: Versioning is possible with API Gateway for your API
+
+:bulb: No baking of credentials into code
+
+### Additional Exam Tips
+
+- Think **synchronous or asynchronous (ELBs needed)**.
+- Does the order of messages matter?
+- What type of application load will you see?
+- SQS can _occassionally_ duplicate messages, but if a question says its being done consistently its likely related to a misconfigured visibility timeout, or the developer is failing to make the delete API call.
+- SQS queues are not bi-directional, if you need that (i.e. the message returned back to the sender resource) you will need two SQS queues.
+- Know all the default settings.
+- Proactive notifications = SNS
+- CloudWatch loves SNS, anything you need to know happening inside of AWS will use SNS as the mesenger
