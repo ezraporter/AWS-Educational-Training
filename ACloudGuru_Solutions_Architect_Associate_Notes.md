@@ -1259,3 +1259,45 @@ Dead Letter Queues solve this, allowing you side-line problematic messages after
 
 Dead-Letter Queue's need to be created before Primary Queues. All you have to do is set "enabled" and then select the AWS ARN for the the newly created queue. You also set the "Maximum Recieves" allowing the number of tries the primary queue makes before sidelining the message.
 
+Dead Letter Queues have the same retention window and overall structure as primary queues.
+
+Dead Letter Queues are also usable with SNS topics.
+
+### Ordered Messages with SQS FIFO (First In First Out)
+
+> **Scenario:** Multiple messages uploaded at the same time may not come out in the same order as they went in (and, rarely, they can get duplicated). When ordering and duplication matters, you use FIFO.
+
+![SQS FIFO](/img/sqs_fifo.png)
+
+:bulb: SQS FIFO costs more and limits you to 300 messages per second. So these are the reasons you may choose standard over FIFO. FIFO could be useful for things like bank statements.
+
+FIFO queues need to be named with a `.fifo` extension.
+
+### Delivering Messages with SNS
+
+What is push-based messaging? Unlike polling, the messages arent available as-ready. Instead it happens when delivered.
+
+SNS can deliver info on our behalf, users don't have to be relied on to get the content. This can be used to alert a system or a person.
+
+SNS Settings:
+
+- **Subscribers**: Kinesis, SQS, lambda, email, HTTPS, SMS, platform application endpoint
+- **Message Size**: Same as polling, 256kb message size max
+- **Dead-Letter Queue Support:** Messages that fail to be delivered can be stored in an SQS DLQ
+- **FIFO or Standard Support:** FIFO only supports SQS as a subscriber
+- **Encryption:** Encrypted at rest by default
+- **Access Policy:** A rresource policy can be added to a topic, similar to S3
+
+Email endpoints require opting in on the recipients behalf.
+
+A proper Access policy (permissions) must be set up properly to allow for the SNS to make it to the SQS queues.
+
+:bulb: Alerts and notifications on the exam tend to be related to SNS.
+
+:bulb: Push-based notifications, think SNS
+
+:bulb: SNS and CloudWatch are best friends
+
+:bulb: "Where does it go?" You will need to know all the subscriber options. **Don't pick SES, SES is better for marketing emails.**
+
+:bulb: SNS will only retry endpoints once
