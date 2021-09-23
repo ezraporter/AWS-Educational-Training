@@ -1328,3 +1328,87 @@ Features to Know:
 - Know all the default settings.
 - Proactive notifications = SNS
 - CloudWatch loves SNS, anything you need to know happening inside of AWS will use SNS as the mesenger
+
+## Big Data
+
+### Exploring Large Redshift Databases
+
+**The 3 V's of Big Data:**
+
+1) **Volume:** Tera to petabytes of data
+2) **Variety:** Data comes from a range of sources and formats
+3) **Velocity:** Businesses require speed, data needs to be collected, stored, analyzed in a short period of time
+
+**Redshift** is a fully managed, petabyte-scale data warehouse. It's basically an RDS but for big data. Redshift can hold up to 16PB of data. Allows you to not have to split datasets into large databases. You can still use standard SQL and BI tools to interact with it. Redshift is a fantastic tool for BI, but is not a RDS replacement.
+
+Redshift is made of _clusters_ comprised of _nodes_  (the more nodes, the more performance).
+
+> :bulb: Redshift is **not** a highly available service, it only spins up in **one AZ.**
+
+### Processing Data with EMR (Elastic MapReduce)
+
+**What is ETL?**
+
+Extract, transform, load.
+
+**What is EMR?**
+
+Managed big data platform that allows you to process vast amounts of data using open source tools (i.e. Spark, Hive, etc.). **It's AWS's ETL tool.**
+
+:bulb: This is an open-source cluster, EMR is a managed fleet of EC2 instances running open-source tools. Therefore, EC2 instances apply so you can use spot instances to reduce cost.
+
+:bulb: Since they are standard EC2 instances, they live inside your VPC.
+
+### Streaming Data with Kinesis
+
+**Kinesis** is a real-time streaming data service for ingestion, processing, and analysis. it's a huge data highway in your AWS account.
+
+There are 2 forms:
+
+1) **Kinesis Data Streams**: Real-time streaming for ingesting data (no limit to where the data can go), but you're responsible for creating the consumer and scaling stream
+2) **Kinesis Firehose**: Data transfer tool to get info to S3, Redshift, Elastisearch, or Splunk. Near real-time (<60 seconds). But uses AWS plug and play architecture
+
+**Kinesis Data Stream Diagram:**
+
+![Kinesis Data Stream](img/kinesis_data_stream.png)
+
+**Kinesis Data Firehose Diagram:**
+
+![Kinesis Data Fireshose](/img/kinesis_data_firehose.png)
+
+Kinesis Data Analytics, paired with Stream or Firehose, lets you analyze data using SQL.
+
+- Easy to use
+- No servers to manage, scaling is handled automatically
+- You only pay for what you use
+
+:bulb: Scenario: When looking for a message broker, which do we pick? SQS vs Kinesis. Kinesis is the answer when real-time info is required, but it's more complicated to set up and generally focuses on big data apps.
+
+:bulb: "Real time" = Streams, "Near real time" = Firehose
+
+### Amazon Athena and AWS Glue
+
+**Athena** is an interactive query service for analyzing data in S3 using SQL, talk directly to the data without the load process of ETL.
+
+**Glue** is a serverless data integration service performing ETL workloads without underlying EC2. It basically replaces EMR.
+
+![Athena & Glue](/img/athena_and_glue.png)
+
+:bulb: If faced with a scenario with a serverless SQL solution, **Athena** is your best choice.
+
+- Both Athena and Glue are serverless with little customer responsibility
+- Athena = Serverless SQL, Glue = Serverless ETL
+
+### Visualizing Data with QuicSight
+
+Quicksight is a fully managed AWS BI visual service. Similar to Tableau.
+
+Anything talking about interpreting data to BI teams, dashboards, etc.
+
+### Analyzing Big Data with Elastisearch
+
+Elastisearch lets you quickly serach over your stored data and analyze the data you get back. Commonly used as part of Elastisearch, Logstash, and Kibana (ELK) stack (tool to commonly analyze logs).
+
+> Think of it like Google for your data/logs.
+
+Similar to what CloudWatch Logs does at a high level. Elastisearch = ELK = logs. It is a third-party logging solution.
