@@ -1412,3 +1412,46 @@ Elastisearch lets you quickly serach over your stored data and analyze the data 
 > Think of it like Google for your data/logs.
 
 Similar to what CloudWatch Logs does at a high level. Elastisearch = ELK = logs. It is a third-party logging solution.
+
+## Serverless Architecture
+
+### Serverless Overview
+
+What is "serverless?" We focus on the code and leave the management of the compute architecture to AWS.
+
+**Benefits**:
+
+- Ease of use: Not much else to do than bring your code
+- Event based: Serverless compute resources can also be brought in response to an event happening
+- Billing model: Pay as you go in its purest form
+
+Focus on exam answers that move away from unmanaged architecture like EC2. 
+
+### Computing with Lambda
+
+Lambds is a serverless compute service allowing you to run code without any provisioning of underlying servers.
+
+Building a Function:
+
+![Lambda Diagram](/img/lambda_diagram.png)
+
+:bulb: The exam will ask about attaching roles to Lambda Functions
+
+:bulb: A function cannot run for longer than **15 minutes** and can't have more than 10Gb of RAM
+
+### Container Overview
+
+A **container** is a standard unit of software that packages all of the code and dependencies so the application runs quickly and reliably from one computing environment to another.
+
+Containers take out the duplication needed for vitual machines by proxy of multiple OS's.
+
+Container terms:
+
+- **Dockerfile:** text document containin all the commands or instructions that will be used to build an "image"
+- **Image:** The immutable file containing the code, libraries, dependencies, and config files needed to run an app
+- **Registry:** Stores Docker images for distribution, can be both private and public (think Github for your images)
+- **Container:** A running copy of the created image
+
+:bulb: Containers are generally seen as more flexible, theyre easier to run on-site and move around to different environments.
+
+:bulb: "Dev is prod and prod is dev" but only for containers, i.e. what you do in testing can carry on to production and vice versa
