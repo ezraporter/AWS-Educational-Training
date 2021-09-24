@@ -1425,7 +1425,7 @@ What is "serverless?" We focus on the code and leave the management of the compu
 - Event based: Serverless compute resources can also be brought in response to an event happening
 - Billing model: Pay as you go in its purest form
 
-Focus on exam answers that move away from unmanaged architecture like EC2. 
+Focus on exam answers that move away from unmanaged architecture like EC2.
 
 ### Computing with Lambda
 
@@ -1455,3 +1455,64 @@ Container terms:
 :bulb: Containers are generally seen as more flexible, theyre easier to run on-site and move around to different environments.
 
 :bulb: "Dev is prod and prod is dev" but only for containers, i.e. what you do in testing can carry on to production and vice versa
+
+### Running Containers in ECS or EKS
+
+ECS (Elastic Container Service) is the answer for when you need to scale containers. Allows for management of many containers and places them on the appropriate archtecture.
+
+They have ELB and role integration. It's also easy to use.
+
+ECS is great for in-AWS solutions, but when you need to go cross-platform outside of ECS then you use EKS (Elastic Kubernetes Service).
+
+EKS allows for open-source alternatives, can be used on-prem and in the cloud. EKS is the AWS managed version of Kubernetes.
+
+These both use EC2 instances, so the same settings and cost savings from typical EC2 architecture apply.
+
+:bulb: In the exam, ECS is preferred. If you see questions about containers, think ECS _unless_ the question asks about open-source or on-prem containers. Then pick EKS.
+
+### Removing Servers with Fargate
+
+Fargate effectively allows you to remove EC2 instances but continue running your containers. AWS Fargate is a serverless compute engine for containers that works with both ECS and EKS.
+
+AWS owns and manages infrastructure. Linux-only workloads.
+
+**EC2 vs. Fargate:**
+
+![EC2 vs Fargate](/img/fargate_vs_ec2.png)
+
+**Fargate vs. Lambda:**
+
+![Fargate vs Lambda](/img/fargate_vs_lambda.png)
+
+**Exam tips:**
+
+Know the use cases:
+
+- Lambda is for lightweight functions, can be run very quickly, and go into AWS architecture
+- Fargate is for containers that don't need to run all the time
+- EC2 is for instances that always need to be run and for saving on cost
+
+Fargate doesn't work by itself, it needs ECS or EKS. It is also serverless.
+
+### Amazon EventBridge (CloudWatch Events)
+
+EventBridge is CloudWatch Events 2.0, they are exchangeable. Allows you to pass events from a source to an endpoint, essentially the glue that holds your serverless app together.
+
+This communication is handled by creating a rule:
+
+1) Define a pattern
+2) Select Event Bus
+3) Select Your Target
+4) Tag everything
+5) Sit Back!
+
+Any API call that happens can kick off EventBridge and Lambda functions. This is the fastest way to repsond to things happening in your environment.
+
+### Extra Exam Tips
+
+4 questions to ask:
+
+1) Is the app right for containers? Best for microservices and small apps
+2) Do you need those servers?
+3) Is the app AWS specific?
+4) How long does the code have to run?
