@@ -1516,3 +1516,138 @@ Any API call that happens can kick off EventBridge and Lambda functions. This is
 2) Do you need those servers?
 3) Is the app AWS specific?
 4) How long does the code have to run?
+
+## Security
+
+### DDoS Overview
+
+A DDoS attack stands for "Distributed Denial of Service" where an attack attempts to make your website or app unavailable to your end users. Can be achieved using large packet floods, large botnets, reflection/amplification techniques, etc.
+
+A **Layer 4 DDoS attack** is often referred to as a SYN flood. It works at the transport layer (TCP).  To establish a TCP connection, a 3 way handshake takes place:
+
+- client sends a SYN packet to a server
+- server replies with a SYN-ACK ("acknowldegement")
+- client repsonds to that with an ACK
+
+This establishes the TCP connection, letting the app send data using Layer 7 (application layer protocl) such as HTTP.
+
+**SYN Floods** use TCP stack to overwhelm a server by sending a large number of SYN packets and then ignoring the SYN-ACKS returned by the server. Causes server to use up resources waiting for the illigitimate calls.
+
+> This results in many concurrent TCP connections causing them to eat through the allowed number of TCP connections, resulting in ignoring legitimate ones from being answered
+
+An **Amplification Attack** involves a third party server (such as an NTP server) being sent a request using a spoofed IP address. The server will then repsond to the request with a greater payload than than the initial request. Attackers use multiple NTP servers per second.
+
+A **Layer 7 Attack** occurrs when a web server recieves a lot of GET or POST requests, typically from a bot. The web server is responding to all of the bot requests, blocking out the end user.
+
+### Logging API Calls with CloudTrail
+
+**CloudTrail** records AWS management console actions and API calls. Think of it as CCTV monitoring for your internal AWS account. It does not look at SSH commands.
+
+What is logged?
+
+- Metadata around API calls
+- ID of the API caller
+- Time of the API call
+- Source IP address of the API caller
+- Request Parameters
+- Response elements returned by the service
+
+### Protecting Applications with Shield
+
+AWS Shield is free DDoS Protection. It protects all AWS customers on ELB, CloudFront, and Route 53 against SYND/UDP floods, reflection attacks, and other **Layer 3 and Layer 4** attacks only.
+
+AWS Shield Advanced provides enhances protection against larger and more sophiticated attacks. Offers always on, flow based monitoring to provide near real-time notifications. 24/7 access to the DDoS Response Team (DRT) and protects your AWS bill against higher fees due to product usage spikes during DDoS attacks. Costs $3,000 per month.
+
+### Filtering Traffic with AWS WAF
+
+WAF = Web Application Firewall.
+
+Lets you monitor HTTP/HTTPS requests forwarded to CloudFront or ELB. Lets you configure allowed IP addresses or query string parameters.
+
+**Operates at Layer 7.**
+
+Allows 3 behaviors:
+
+1) Allow all requests except what you specify
+2) Block all requests except what you specify
+3) Count the requests that match the properties you specify
+
+You can use IP address, country origin, values in request headers, presence of SQL code, presence of a script, strings that appear in requests.
+
+### Guarding Your Network with GuardDuty
+
+**Threat detection service that uses ML/AI** for malicious behavior monitoring (API calls, attempts to disable CloutTrail, unathorized deployments, etc.)
+
+Allows you to centralize threat detection across many AWS accounts. Thread detection with AI.
+
+Takes 7-14 days to set up a baseline. 30 days are free than charged based on quantity of events.
+
+### Monitoring S3 Buckets with Macie
+
+Personally Identifiable Information at times is stored in S3 buckets, Macie allows for Automated analysis of data using AI to determine if the S3 objects contain PII.
+
+Will alert you to unencrypted buckets. Great for HIPPA type things.
+
+You can filter for alerts and search them in the AWS console.
+
+### Securing Operating Systems with Inspector
+
+Amazon Inspector looks at network and EC2 instances for vulnerabilities or deviations in best practices.
+
+After performing an assessment, Amazon Inspector makes a detailed list of security findings prioritized by level of severity.
+
+**2 Types of Assessment:**
+
+1) Network Assessments - checks for ports reachable outside the VPC (inspector agent not required)
+2) Host Assessments - checks for vulnerable software, host hardening, security best practices (inspector agent required)
+
+### Managing Encryption Keys with KMS and CloudHSM
+
+AWS KMS is a the Key Management Service to easily control and manage encryption keys. Integrates with EBS, S3, RDS, etc.
+
+KMS provides centralized control over the lifecycle of your keys. The **CMK** is the master key (customer master key).
+
+To start using KMS, you start with requesting a CMK creation and designating who has access to it.
+
+HSM = Hardware Security Module, a physical computing device that safegurd and manages digital keys and performs encryption/decryption functions. Contains one or more cryptoprocessor chips.
+
+**3 Ways to Generate a CMK:**
+
+1) AWS creates the CMK, the key material is generated within HSMs managed by AWS KMS.
+2) Import key material from your own keyu management infrastructure and associate it with a CMK
+3) Have the key material generated and used in an AWS CloudHSM Cluster as part fo the custom key store feature in AWS KMS.
+
+Key rotations can be done automatically using the first method annually.
+
+Policies are the primary way to manage AWS KMS CMK access. Key policies are attached specifically using resource-based policy attachments.
+
+3 Ways to Control Permissions:
+
+1) Use the key policy
+2) Use IAM policies in combination with the key policy
+3) Use grants in combination with the key policy
+
+CloudHSM (Hardware Security Module) is a physical device entirely dedicated to you that canb be deployed in a highly available fashion.
+
+### Storing Your Secrets in Secrets Manager
+
+A service that securely stores, ecnrypts, and rotates database credentials. It's not free, but auto rotates credentials, has encrytpion in transit and at rest using KMS, and can apply fine grained access control using IAM policies.
+
+You app makes an API call to Secrets Manager to retrieve the secret programmatically. 
+
+- RDS credentials
+- Non RDS credentials
+- Any type fo secret with a key-value pair
+
+:bulb: If you enable rotation, Secrets Manager will auotmatically rotates the secret once to test the configuration. If you are still using hard coded credentials, enabling rotation will break your apps.
+
+### Storing Your Secrets in Parameter Store
+
+A Systems Manager providing secure, hierarchical storage for data and secret management. It's **free**.
+
+2 Limits:
+
+1) No key rotation
+2) Set to 10,000 params
+
+If you need something outside those two limits, then use Secrets Manager
