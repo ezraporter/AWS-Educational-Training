@@ -1633,7 +1633,7 @@ CloudHSM (Hardware Security Module) is a physical device entirely dedicated to y
 
 A service that securely stores, ecnrypts, and rotates database credentials. It's not free, but auto rotates credentials, has encrytpion in transit and at rest using KMS, and can apply fine grained access control using IAM policies.
 
-You app makes an API call to Secrets Manager to retrieve the secret programmatically. 
+You app makes an API call to Secrets Manager to retrieve the secret programmatically.
 
 - RDS credentials
 - Non RDS credentials
@@ -1651,3 +1651,87 @@ A Systems Manager providing secure, hierarchical storage for data and secret man
 2) Set to 10,000 params
 
 If you need something outside those two limits, then use Secrets Manager
+
+### Temporarily Sharing S3 Objects Using Presigned URLs or Cookies
+
+Object owners can optionally share S3 objects to others with a time limit using a **presigned URL**. Presigned URLs require security credentials, a specific bucket name and object key, and indicate the HTTP method (GET to download the object), and an expiration date.
+
+Anyone who recieves the presigned URL can access the object. Even if the bucket and object are private, the presigned URL will still give recipients access.
+
+**Presigned cookies** are useful for accessing multiple restricted files. The cookie is saved to the users computer and they will be able to brows the restricted content.
+
+Presigned URLs can be made programmatically using commands like:
+
+``` bash
+aws s3 presign s3://<yourbucketname> --expires-in 3600
+```
+
+And this generates a URL in the console.
+
+### Advanced IAM Policy Documents
+
+**Amazon Resource Names (ARN):**
+
+- These define resources and all begin with: `arn:partition:service:region:account_id:` and then ends with `resource`
+
+**IAM Policies** are JSON documents that define permissions and can be applied to identities as well as resources. No effect though until they are attached. Policy documents are lists of statements in the following format:
+
+``` JSON
+{
+  "Version": "YYYY-MM-DD"
+  "Statement": [
+    {
+      ...
+    },
+    {
+      ...
+    },
+    {
+      ...
+    }
+  ]
+}
+```
+
+Where each `...` is a statement matching an AWS API reuqest.
+
+**SID** = "Statement ID", followed by an Effect and an Action(s).
+
+Example:
+
+```JSON
+{
+  "Version": "2012-10-17"
+  "Statement": [
+    {
+      "Sid": "SpecificTable",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:BatchGet*",
+        "dynamodb:DescribeStream",
+        "dynamodb:CreateTable:"
+      ],
+      "Resource": "arn:aws:dynamodb:*:*:table/MyTable
+    }
+  ]
+}
+```
+
+**Permission Boundaries** are used to delegate administration to other users, prevent privilege escalation or unnecessarily broad permissions, control max persmissions an IAM policy can grant.
+
+:bulb: In the exam, be familiar with IAM policy structure.
+
+:bulb: If something is not explicitly allowed, it is implicitly denied. Explicit denies override everything else.
+
+:bulb: multiple policies can be joined to a resource.
+
+### AWS Certificate Manager
+
+Allows you to create, manage, and deploy private and public SSL cers for use with other AWS services (ELB, CloudFront, API Gateway).
+
+- No more paying for SSL certs, AWS does this for free. You still pay for resources utilizing certs (like ELB).
+- You have auotmated renewals and deployment of your SSL certs
+- Removes a lot of the manual process of creating SSL certs such as creating key pairs or certificate signing requests (CSRs)
+
+### Extra Exam Tips
+
