@@ -1851,6 +1851,7 @@ CloudFront URL access content can be restricted using presigned URLs or cookies.
 :bulb: Caching via CloudFront will often solve slow connection issues.
 
 :bulb: CloudFront _can_ block individual countries, but the WAF is a better tool for it.
+
 ### Caching Your Data with ElastiCache and DAX
 
 **ElastiCache** is a managed version of 2 open source techs: **Memcached** and **Redis**. Neither are AWS-specific, but are streamlined through ElastiCache.
@@ -1877,6 +1878,50 @@ Top 3 Global Accelerator Features:
 
 :bulb: On the exam if you see **IP Caching** think Global Accelerator!
 
-### Extra Exam Tips
+**Extra Exam Tips:**
 
 **CloudFront** is the only option to add HTTP to a static website hosted in an S3 bucket
+
+## Governance
+
+### Managing Accounts with Organizations
+
+Organizations is a free governance tool allowing you to create multiple AWS accounts and control them from a single location rather than jumping between accounts.
+
+Key Features:
+
+- **Logging Accounts**: It's best practice to create a specific account dedicated to logging. CloudTrail supports logs aggregation
+- **Programmatic Creation:** Easily create or destroy new AWS accounts
+- **Reserved Instances:** RIs can be shared across accounts
+- **Consolidated Billing:** Primary account pays the bills
+- **Service Control Policies (SCPs):** Can limit users' permissions
+  - Once implemented, these will be applied to every single resource inside an account .Ultimate way to restrict permissions and even apply to the root account
+    - This is the only way to restrict what the root account can do!
+
+:bulb: You'll be given exam scenarios about wanting to ensure logs are centralized and that no one can edit or delete them, pick an answer the includes Organizations to centralize those logs and SCPs to restrict anyone from making changes to them.
+
+### Sharing Resources with AWS RAM
+
+RAM = Resource Access Manager
+
+Free service letting you share resources with other AWS accounts and within your organization. Allows you to easily share resources rather ahdn duplicating across accounts.
+
+Things you can share:
+
+- Transit gateways
+- VPC subnets
+- License Manager
+- Route 53 Resolver
+- Dedicated hosts....etc....
+
+:bulb: RAM vs VPC Peering: If sharing resources within the same region **use RAM.** If you're sharing across regions, use **VPC peering.**
+
+### Setting Up Cross-Account Role Access
+
+Cross-account role access is needed as the number of AWS accounts you manage increases. Duplicating IAM accounts create a security vulnerability. Cross-account role access gives you the ability to set up temporary access you can easily control.
+
+:bulb: Anytime credentials are mentioned, scan the answers for roles! Use roles whenever you can.
+
+:bulb: Any questions about auditing, give role access and not permanent credentials.
+
+:bulb: Roles are temporary, you can't permanently assume a role.
