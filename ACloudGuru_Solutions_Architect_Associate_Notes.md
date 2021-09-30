@@ -1811,3 +1811,72 @@ Features of Systems Manager:
 The Systems Manager agent must be installed on the EC2 instance(s) to be used. The instance must also have a role or permissions to communicate with the service.
 
 :bulb: on the exam you may hear the features used and not explicitly "systems manager".
+
+## Caching
+
+### Caching Overview
+
+Caching essentially allows for storage of data once an initial, more intensive pull executes to the next time it doesn't take nearly so much work.
+
+Cacheing in AWS apps can happen:
+
+- Externally: Data to be returned to users (vidoes, images, static content)
+- Internally: Database speedup
+
+AWS Caching Options:
+
+1) CloudFront
+2) ElastiCache
+3) DAX (DynamoDB Accelerator)
+4) Global Accelerator
+
+Whenever possible, pick a solution that includes caching.
+
+### Global Caching with CloudFront
+
+CloudFront is a content delivery network (CDN) that securely delivers data, videos, apps, APIs to customters globally. It helps reduce latency and provide higher transfer speeds to AWS edge locations.
+
+Example: The CloudFront Edge Location stores a copy of the queried data. The first query will be slow, but every subsequent one will be much faster.
+
+CloudFront defaults to HTTPS connections with the ability to add custom SSL certificates. You can put a secure connection on your S3 static websites.
+
+You can't pick specific countries, just global distribution/general global areas.
+
+CloudFront has the ability to front AWS endpoints along with non-AWS apps.
+
+You can force an expiration date on content from the cache.
+
+CloudFront URL access content can be restricted using presigned URLs or cookies.
+
+:bulb: Caching via CloudFront will often solve slow connection issues.
+
+:bulb: CloudFront _can_ block individual countries, but the WAF is a better tool for it.
+### Caching Your Data with ElastiCache and DAX
+
+**ElastiCache** is a managed version of 2 open source techs: **Memcached** and **Redis**. Neither are AWS-specific, but are streamlined through ElastiCache.
+
+**Memcached vs Redis:**
+
+![Memcached vs Redis](/img/elasticache_memcached_redis.png)
+
+**DynamoDB Accelerator (DAX)** is an in-memory cacheing solution reducing DynamoDB repsonse time from miliseconds to microseconds. DAX lives inside the VPC, making caches highly available. You determind the node size and count for the cluster, TTL for the datam and maintenance windows for changes and updates.
+
+### Fixing IP Caching with Global Accelerator
+
+**Global Accelerator** is a networking service that sends your users traffic through AWS' global network infrastructure. It can increase performance and help deal with _IP caching_.
+
+Basically, if a user has an ELB IP cached, and that IP addres changes, Global Accelerator provides two static IP addresses and sits between the user and the ELB so changed IPs don't impact the user.
+
+![Global Accelerator](/img/global_accelerator.png)
+
+Top 3 Global Accelerator Features:
+
+1) Masks Complex Architecture: as apps grow and change, users don't notice and continue to use the same IP addresses
+2) Speeds things up: Traffic is routed through AWS's global network infrastructure
+3) Weighted pools: Created weighted groups behind IPs to test new features or handle environment failure
+
+:bulb: On the exam if you see **IP Caching** think Global Accelerator!
+
+### Extra Exam Tips
+
+**CloudFront** is the only option to add HTTP to a static website hosted in an S3 bucket
