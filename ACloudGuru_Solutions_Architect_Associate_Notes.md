@@ -1733,5 +1733,81 @@ Allows you to create, manage, and deploy private and public SSL cers for use wit
 - You have auotmated renewals and deployment of your SSL certs
 - Removes a lot of the manual process of creating SSL certs such as creating key pairs or certificate signing requests (CSRs)
 
-### Extra Exam Tips
+## Automation
 
+### Why Do We Automate?
+
+There are 3 big tools for automation:
+
+1) CloudFormation: Infrastructure as code
+2) Elastic Beanstalk: all in one service for deploying and scaling web apps and services
+3) Systems Manager: Patch, update, manage, configure EC2 and on-prem architecture
+
+### CloudFormation
+
+CloudFormation is a declarative programming language supporting either JSON or YAML.
+
+Step 1: Write Code
+
+**Example Template:**
+
+```YAML
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        Key: Application
+        Value: !Ref 'AWS::StackName'
+        Key: Newtwork
+        Value: Public
+  GatewayToInternet
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+```
+
+Step 2: Deploy Your Template
+
+:bulb: **Parameters** are part of CloudFormation Stack Templates which specify aspects that whoever designed the template built into the code itself. Example: Instance type (t2.micro)
+
+:bulb: Common exam question might involve that your template is not creating correctly from one location to another, meaning you may need to add that region to you `Mappings` section of your template.
+
+:bulb: CloudFromation is perfect for creating **immutable architecture**, i.e. you can easily pick a template up and run it anywhere you want.
+
+:bulb: Know the 3 general sections of a template:
+
+- Parameters (questions end user is asked)
+- Mappings (values that fill themselves in)
+- Resource (where all the resources go)
+
+:bulb: Hard coded values and resource IDs can be the reason templates fail to create!
+
+:bulb: CloudFromation is just API calls, doing anything you could manually do.
+
+### Elastic Beanstalk
+
+A "Platform as a Service", you bring your code and the provider builds everything for you, deploys the app, and then manages it going forward.
+
+:bulb: When using Beanstalk, there is support for various "Platforms" including Python, Java, PHP, and **Docker** allowing you to run any sort of app language inside of a container on Beanstalk. Generally though, use ECS/EKS for containerized apps.
+
+:bulb: Beanstalk is _not_ serverless.
+
+### Systems Manager
+
+A suite of tools to let you view, control, and automate your AWS architecture as well as on-prem resources.
+
+Features of Systems Manager:
+
+- **Automation Documents**: control instances or AWS resources (also known as "Run Books")
+- **Run Command**: execute commands on your hosts
+- **Patch Manager**: Manages application versions
+- **Parameter Store**: Securely stores your secret values (passwords, usernames, etc.)
+- **Hybrid Activations**: Control on-prem architecture
+- **Session Manager**: Remotely connect and interact with your architecture
+
+The Systems Manager agent must be installed on the EC2 instance(s) to be used. The instance must also have a role or permissions to communicate with the service.
+
+:bulb: on the exam you may hear the features used and not explicitly "systems manager".
