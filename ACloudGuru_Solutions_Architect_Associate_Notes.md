@@ -1925,3 +1925,77 @@ Cross-account role access is needed as the number of AWS accounts you manage inc
 :bulb: Any questions about auditing, give role access and not permanent credentials.
 
 :bulb: Roles are temporary, you can't permanently assume a role.
+
+### Inventory Management with AWS Config
+
+AWS Config is an inventory management and control tool allowing for history tracking of infrastructure and rule creation to make sure it conforms to your best practice requirements. What do I have in my AWS account, what is the state of it?
+
+**State of Your Architecture:**
+
+1) **Query**: Easily discover whats in your environment by searching type, tag, or deleted infrastructure
+2) **Enforce**: Rules can be created to flag when something is going wrong so you're alerted or even auto-fix it
+3) **Learn**: What is the history of your environment? When did something change and who made the call?
+
+Config events can be cross referenced in CloudTrail.
+
+:bulb: Exam questions asking about enforcing standards? Think Config. Example: Use Config to ensure S3 buckets aren't publically available, that your EC2 instances are encrypted, etc.
+
+:bulb: You can use Automation documents or Lambda to enforce your standards.
+
+:bulb: You can roll up all of your results into a single region.
+
+### Offloading Active Directory to Directory Service
+
+AWS Directory Service is a fully managed version of Active Directory, allowing you to run Active Directory while offloading the painful parts and maintaining control and flexibility that AD provides.
+
+![Types of AD](/img/active_directory_types.png)
+
+:bulb: On the exam you'll primarily see Managed Microsoft AD and AD Connector. The former is for migrating everything to AWS, the latter is for connecting to things on prem and don't want to move into the Cloud.
+
+:bulb: Whenever possible use the Directory Service over EC2 instances for AD, always choose the managed services!
+
+:bulb: It's ok to leave AD on-prem.
+
+### Exploring with Cost Explorer
+
+Cost Explorer lets you visualize cloud costs, allowing you to create reports based onf actors like resource tags.
+
+Cost Explorer can make you reports based on service, time frame (and project forward), and filter on tag, category, region, etc.
+
+### Using AWS Budgets
+
+AWS Budgets lets you plan and create alerts based around clodu costs, let users know when theyre close to or exceeding the money they should be using.
+
+**4 Types of Budgets you can Create:**
+
+1) Cost Budgets
+2) Usage Budgets
+3) Reservation Budgets
+4) Savings Plans Budgets
+
+You get 2 free budgets per month.
+
+### Auditing with Trusted Advisor
+
+Trusted Advisor will scan 5 different parts of your account for places where you could adopt recommended best practices by AWS.
+
+**5 Areas:**
+
+1) Cost Optimization
+2) Performance
+3) Security
+4) Fault Tolerance
+5) Service Limits
+
+![Trusted Advisor Dashboard](/img/trusted_advisor_dashboard.png)
+
+Trusted Advisor is free, but the most useful checks will require a business or enterprise support plan. Trusted Advisor will not fix problems for you. Use EventBridge/CloudWatch Events to kick off Lambda to solve the problem for you.
+
+### Governance Exam Tips
+
+- **SCPs (Service Control Policies)** are the _only_ way to restric root accounts
+- User managemeent requires the right tool. Make sure you're using AWS SSO (Single sign on) for internal user management and Cognito for external
+- Use roles everywhere, roles are your best friend
+- Tracking costs is a common exam topic, use a combo of tags, Cost Explorer, and budgets
+- Use SNS to create proactive alerts
+- Automate the repsonse wherever possible
