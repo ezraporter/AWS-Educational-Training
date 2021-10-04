@@ -1999,3 +1999,108 @@ Trusted Advisor is free, but the most useful checks will require a business or e
 - Tracking costs is a common exam topic, use a combo of tags, Cost Explorer, and budgets
 - Use SNS to create proactive alerts
 - Automate the repsonse wherever possible
+
+## Migration
+
+### Migrating Data with AWS Snow Family
+
+Ways to move data to AWS:
+
+- Internet: Slow, potentially a security risk
+- Direct ConnecT: Can be faster and more secure, but not always practical if not needed after migration
+- Physical: Physically enclosing data provided by AWS to bypass the internet altogether
+
+Basically a set of hard drives, sometimes with built-in computing, that is shipped to AWS.
+
+- **Snowcone:** 8TB storage, 4GB memory, 2vCPUs (the smallest snow device)
+  - Easily migrate data to AWS after you've processed it
+  - IoT sensor integration
+  - Perfect for edge computing where power and space are constrained
+- **Snowball Edge**: Jack of all trades, 48Tb to 81Tb storage
+  - Different storage, compute, and GPU flavors
+  - Varying amount of CPU & RAM
+  - Perfect for off-the-grid computing or migration to AWS
+- **Snowmobile**: A literal truck that drives up to your facility and can download 100PB of storage
+  - Designed for exabyte-scale data center migration
+  - Good chance you don't need this
+
+:bulb: For the exam know which solution is best for data migration. I.e., not being able to transfer over the internet, having a large amount of data, or slow internet could be reasons to use Snowball!
+
+:bulb: Migrating works both ways, to and from AWS and takes about a week.
+
+### Storage Gateway
+
+Storage Gateway is a hybrid cloud storage service to manage on-prem resources in the cloud. It can help with a one-time migration or a long-term pairing of your architecture with AWS.
+
+**File Gateway:**
+
+- Network File Sharing (NFS) or SMB mount (SMB for Windows)
+- Keep a local copy of recently used files
+- Good solution to set up a cached file share backed up to S3 via File Gateway for users who don't have enough on-prem storage space :bulb:
+- Helps with migration to AWS
+- All storage gateawy solutions are VMs provided by AWS
+
+**Volume Gateway:**
+
+- iSCSI mount that backs up disks VMs are reading/writing to.
+- Cached or stored mode
+- Create EBS snapshots and restore volumes inside of AWS
+- Perfect for backup or migration
+
+**Tape Gateway:**
+
+- Trick backup devices into "thinking" they're backing up to physical tapes
+- Replaces physical tapes
+- Doesn't change current workflow
+- Encrypted commsDa
+
+**Exam Tips:**
+
+- Storage Gatway is hybrid storage
+- Files? Use File Gateway. Tapes? Use Tape Gateway
+- Know which storage solution is best when running out of space on-prem
+
+### AWS DataSync
+
+DataSync is an agent based solution for migrating on-prem storage to AWS, allows you to esily move data between NFS and SMB shares and AWS storage solutions.
+
+Migration tool for a lot of data on prem for a **one-time** migration. This is done securely and encrypted.
+
+![Data Sync](/img/data_sync.png)
+
+:bulb: DataSync is best for one-time migration, whiel Storage Gateway is best for multiple of for hybrid scenarios.
+
+:bulb: Agent based means installing architecture on your end of the migration.
+
+:bulb: Endpoints include S3, EFS, and FSx.
+
+### AWS Transfer Family
+
+Lets you easily move files in or out of S3 or EFS using SFTP (secure file transfer protocol), FTPS (file transfer protocol over SSL), or FTP (file trtansfer protocol).
+
+:bulb: The easiest way to change nothing is to use Transfer Family, allowing you to have a collection of older apps using protocols that cannoy be changed. Transfer Family is best for _legacy_ apps.
+
+:bulb: FTPS, SFTP are for outside your environment to inside, FTP is for inside your VPS.
+
+:bulb: The DNS entry stays the same, but the location for the storage becomes S3.
+
+### Moving to the Cloud with Migration Hub
+
+AWS Migration Hub is a single place to track progression of the app migration to AWS, integrating with Server Migration Service (SMS) and Database MIgration Service (DMS).
+
+**Server Migration Service:**
+
+- Allows you to schedule when to take your VM architecture and convert it to AMI
+
+**Database Migration Service:**
+
+- Similar to SMS but with a database
+- AWS Schema Conversion Tool and converts them to Aurora
+- AWS DMS can take on prem, EC2, or RDS and conver it to Aurora
+
+**Exam Tips:**
+
+- Scenarios include picking a solution for application migration
+  - Know that DMS is for databases, SMS is for servers, Migration Hub will give you the overview of what you need
+- The Schema Converion tool can help you migrate to Aurora or RDS
+- Favor scenarios where you migrate _everything_ into AWS
