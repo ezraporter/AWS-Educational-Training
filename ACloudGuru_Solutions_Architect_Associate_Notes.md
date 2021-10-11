@@ -1376,7 +1376,7 @@ There are 2 forms:
 
 ![Kinesis Data Fireshose](/img/kinesis_data_firehose.png)
 
-Kinesis Data Analytics, paired with Stream or Firehose, lets you analyze data using SQL.
+:bulb: Kinesis Data Analytics, paired with Stream or Firehose, lets you analyze data using SQL.
 
 - Easy to use
 - No servers to manage, scaling is handled automatically
@@ -2104,3 +2104,52 @@ AWS Migration Hub is a single place to track progression of the app migration to
   - Know that DMS is for databases, SMS is for servers, Migration Hub will give you the overview of what you need
 - The Schema Converion tool can help you migrate to Aurora or RDS
 - Favor scenarios where you migrate _everything_ into AWS
+
+## Practice Exam Result Notes
+
+- RDS Read replicas are not updated synchyronously, MultiAZ handles this
+- When you provision a Multi-AZ DB Instance, Amazon RDS automatically creates a primary DB Instance and synchronously replicates the data to a standby instance in a different Availability Zone (AZ).
+- SQS autoscaling uses "backlog per instance" , backlog per hour is not a valid  metric
+- Zone Apex record type for Route 53: A and AAAA
+- IAM Policies are attached to roles and roles are attached to EC2 instances to grant AWS permissions
+- fast response times with read/writes are best suited for dynamoDB
+- Kinesis Data Analytics involves SQL, not Streams. Streams...streams the data, but Data Analytics can analyze after it recieves it.
+  - Kinesis Data Firehose is best for capturing and loading data into S3, Elastisearch, etc
+- CloudFront does not have the capability to cache queries, it caches content
+- SQS queues do not work with real time needs, this is a kinesis thing
+- ECS migration with Fargate can handle **unpredictable** workloads through auto scaling
+- There is a vCPU based on-demand instance limit per region
+- auto scaling groups can be configured for less than 5 minutes or greater, and follow a default cooldown procedure
+- extreme performance requires a network load balancer
+- auto scaling groups terminate oldest launch configs first
+- SQS FIFO has a limit of 3000 messages per second
+- remember there is a S3 notifications feature to enable whenever things happen in a bucket
+- Amazon Cognito lets you use third party logins like facebook/google/etc
+- You can't delete default security groups but you can change their rules
+- the customer is responsible for EC2 OS patching
+- You can sell reserved instances on the Reserved Instance Marketplace
+- SES cant be used in combination with monitoring by cloudwatch, just for apps that need to send email comms
+- Almost always choose launch templates
+  - You MUST use launch templates to use Amazon EC2 Dedicated Hosts, luanch configurations can't do this
+- RDS can perform CNAME failover swiching on its own, Route 53 is not needed
+  - When failing over, Amazon RDS simply flips the canonical name record (CNAME) for your DB instance to point at the standby, which is in turn promoted to become the new primary.
+- AWS Personal Health Dashboard can give you status of downed services
+- Attaching an ENI on a running EC2 is called a **hot** attach (not warm)
+- cluster placement groups are logical instances grouped in a **single AZ**, they can span peered VPCs in the same region as well
+- Application Load Balancers are best served for **path-based routing** as well as host-based
+  - Stick sessions are benefitted by Classic Load balancers
+- RDS Multi-AZ does **not** handle cross-region recovery. In this case use cross-region read replicas.
+- Athena is a SQL S3 query service
+- Attach IAM **policies** to IAM groups
+- NACLs are **stateless**, security groups are **stateful**
+  - Stateless = Responses to allowed inbound traffic are subject to the rules for outbound traffic (and vice versa).
+  - Stateful = If you send a request from your instance, the response traffic for that request is allowed to flow in regardless of inbound security group rules. Responses to allowed inbound traffic are allowed to flow out, regardless of outbound rules.
+- You can't modify or remove the `* All Traffic Deny` rule in a a NACL
+- Subnets map to **single** availability zones
+- "ingress" means "allowance" i.e. you can have an ingress on port 22 for SSH access
+- Security groups can be changed when instances are running or stopped
+- You can specify allowances on security groups, but not denials
+- AWS WAF can block SQL injection and cross-site scripting
+- Subnets in the VPC must be associated with a NACL, if not they will auto associate to the default NACL
+- A VPN provides a connection between an on-premises network and a VPC, using a secure and private connection with IPsec and TLS, they **are not** dedicated connections since they use the internet
+- Reusing existing internet connections can be achieved with AWS VPN
