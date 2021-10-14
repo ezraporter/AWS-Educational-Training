@@ -2130,7 +2130,7 @@ AWS Migration Hub is a single place to track progression of the app migration to
 - You can sell reserved instances on the Reserved Instance Marketplace
 - SES cant be used in combination with monitoring by cloudwatch, just for apps that need to send email comms
 - Almost always choose launch templates
-  - You MUST use launch templates to use Amazon EC2 Dedicated Hosts, luanch configurations can't do this
+  - You **MUST** use launch templates to use Amazon EC2 Dedicated Hosts, launch configurations can't do this
 - RDS can perform CNAME failover swiching on its own, Route 53 is not needed
   - When failing over, Amazon RDS simply flips the canonical name record (CNAME) for your DB instance to point at the standby, which is in turn promoted to become the new primary.
 - AWS Personal Health Dashboard can give you status of downed services
@@ -2153,3 +2153,27 @@ AWS Migration Hub is a single place to track progression of the app migration to
 - Subnets in the VPC must be associated with a NACL, if not they will auto associate to the default NACL
 - A VPN provides a connection between an on-premises network and a VPC, using a secure and private connection with IPsec and TLS, they **are not** dedicated connections since they use the internet
 - Reusing existing internet connections can be achieved with AWS VPN
+- Note the difference between "high availability" and "fault tolerance"
+  - high availability may meet the minimum but wont hide performance degradation
+  - fault tolerance is redundant enough to not evidence any lull in performance
+- In CloudFormation, **parameters** are used for user inputs, **mappings** are used for cross region things like AMI specification
+- The **recovery time objective (RTO)** is the targeted duration of time between the event of failure and the point where operations resume. A **recovery point objective (RPO)** is the maximum length of time permitted that data can be restored from, which may or may not mean data loss.
+  - RTO = time to system back online
+  - RPO = maximum amount of data loss
+- S3 Lifecycle policies let you delete or move data based on age
+- CloudFront is a content delivery network (CDN) and can cache copied of objects at _edge locations_
+- **Elasticache** can give you memcached or redis and makes queries faster by sending users to the cached data
+- CloudFront integrates with Shield and WAF
+- Autoscaling can launch across AZs
+  - Autoscaling needs a launch configuration/template, group, and policy
+
+![AWS Security Groups vs NACLs](/img/securitygroup_vs_nacl.png)
+
+- **SSE** = server-side encryption
+- **CSE** = client side encryption
+- **AWS Import/Export** is used for transferring physical storage into AWS using portable sotrage devices
+- AWS Elastic Map Reduce (EMR) can help with data into and out of DynamoDB
+- Disaster recovery patterns involving secondary AWS architecture in another region in active-active config is known as **Multi-Site**
+- AWS Direct Connect allows for 1 or 10 Gbps dedicated networks
+- You can assign up to **5 security groups to an instance**
+- The default NACL allows all traffic
