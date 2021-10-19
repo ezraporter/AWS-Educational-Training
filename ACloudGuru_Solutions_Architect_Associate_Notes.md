@@ -2135,7 +2135,7 @@ AWS Migration Hub is a single place to track progression of the app migration to
   - When failing over, Amazon RDS simply flips the canonical name record (CNAME) for your DB instance to point at the standby, which is in turn promoted to become the new primary.
 - AWS Personal Health Dashboard can give you status of downed services
 - Attaching an ENI on a running EC2 is called a **hot** attach (not warm)
-- cluster placement groups are logical instances grouped in a **single AZ**, they can span peered VPCs in the same region as well
+- cluster placement groups are logical EC2 instances grouped in a **single AZ**, they can span peered VPCs in the same region as well. Other placement groups are **spread** and **partition**
 - Application Load Balancers are best served for **path-based routing** as well as host-based
   - Stick sessions are benefitted by Classic Load balancers
 - RDS Multi-AZ does **not** handle cross-region recovery. In this case use cross-region read replicas.
@@ -2177,3 +2177,9 @@ AWS Migration Hub is a single place to track progression of the app migration to
 - AWS Direct Connect allows for 1 or 10 Gbps dedicated networks
 - You can assign up to **5 security groups to an instance**
 - The default NACL allows all traffic
+- EC2 Video cards include ENI (elastic network interface for basic networking), EN (enhanced network for 10 - 100 Gbps speeds), and EFA (for HPC/ML)
+- RDS failovers take **1 to 2 minutes** to complete
+- RDS multi-AZ failures have the CNAME switched from the primary to the secondary db
+- EBS volumes can be used normally while snapshots are being created
+- AWS VPN does not bypass the internet. DirectConnect does and has speeds of 10Gbps
+- NACL rules are evaluated by rule number from lowest to highest and executed immediately when a matching rule is found.
