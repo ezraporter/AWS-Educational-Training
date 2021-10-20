@@ -2183,3 +2183,15 @@ AWS Migration Hub is a single place to track progression of the app migration to
 - EBS volumes can be used normally while snapshots are being created
 - AWS VPN does not bypass the internet. DirectConnect does and has speeds of 10Gbps
 - NACL rules are evaluated by rule number from lowest to highest and executed immediately when a matching rule is found.
+- CloudWatch Metrics **does not** monitor memory utilization _unless you configure it to_
+- RDS read replicas can be within AZ, cross-AZ, or cross-Region.
+- **Backup and Restore** disaster recovery pattern is the least expensive option
+
+![AWS Disaster Recovery](img/aws_disaster_recovery.png)
+
+- Attaching an ENI when an EC2 instance is *stopped* is an example of a **warm attach**
+- DynamoDB Auto scaling must be turned on manually
+- Auto scaling groups follow a 5 minute default cooldown procedure
+- **AWS Security Token Service (STS)** can be used to authenticate short term security credentials
+- **AWS KMS** can be used to encrypt data before saving it to disk
+- **Transfer Acceleration** can be used to speed up long distance S3 data transfers
