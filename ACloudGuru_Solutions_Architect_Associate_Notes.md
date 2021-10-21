@@ -2195,3 +2195,4 @@ AWS Migration Hub is a single place to track progression of the app migration to
 - **AWS Security Token Service (STS)** can be used to authenticate short term security credentials
 - **AWS KMS** can be used to encrypt data before saving it to disk
 - **Transfer Acceleration** can be used to speed up long distance S3 data transfers
+- The default configuration of the default NACL is Allow, and the default configuration of a custom NACL is Deny.
